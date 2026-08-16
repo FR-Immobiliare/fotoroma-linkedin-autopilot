@@ -1,0 +1,37 @@
+name: FotoRomaImmobiliare LinkedIn Autopilot
+
+on:
+  schedule:
+    # Gira ogni Martedì e Venerdì alle 08:00 UTC (10:00 ora italiana)
+    - cron: '0 8 * * 2,5'
+  workflow_dispatch: # Permette di avviare manualmente con un clic su GitHub
+
+jobs:
+  publish-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Autopilot Engine
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python scripts/auto_poster.py
+
+      - name: Commit & Push changes (Move photo to published/)
+        run: |
+          git config user.name "FotoRoma Autopilot Bot"
+          git config user.email "bot@fotoromaimmobiliare.it"
+          git add queue_photos/ published/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-archive published photo [skip ci]" && git push)
