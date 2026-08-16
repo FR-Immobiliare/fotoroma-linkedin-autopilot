@@ -1,0 +1,39 @@
+name: FotoRomaImmobiliare B2B Outreach Autopilot
+
+on:
+  schedule:
+    # Gira ogni Lunedì, Mercoledì e Giovedì alle 07:30 UTC (09:30 ora italiana)
+    - cron: '30 7 * * 1,3,4'
+  workflow_dispatch: # Avvio manuale da GitHub
+
+jobs:
+  run-outreach:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Outreach Engine
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python scripts/b2b_outreach_engine.py
+
+      - name: Commit & Push contacted log
+        run: |
+          git config user.name "FotoRoma Outreach Bot"
+          git config user.email "bot@fotoromaimmobiliare.it"
+          git add data/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update contacted log [skip ci]" && git push)
