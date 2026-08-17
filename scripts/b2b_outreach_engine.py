@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Smart Outreach Engine con 1-Click Unsubscribe Automatico
-1. Disiscrizione 100% Automatica via Web (fotoromaimmobiliare.it/disiscrizione?email=...)
-2. Casella mittente e ricezione ufficiale: info@fotoromaimmobiliare.it
-3. Tracciamento pixel e invio scaglionato anti-spam
+FotoRomaImmobiliare — B2B Smart Outreach Engine
+- Link secondario sotto il bottone WhatsApp: RIMANDA A PREZZI E TARIFFE UFFICIALI (fotoromaimmobiliare.it/prezzi-fotografo-immobiliare-roma)
+- Disiscrizione automatica 1-Click
 """
 
 import os
@@ -119,8 +118,8 @@ def build_html_template(target_type, name, zone, city, recipient_email):
         </tr>
         """
 
-    # Link automatico 1-Click Unsubscribe sul sito web ufficiale FotoRomaImmobiliare.it
     auto_unsub_url = f"https://fotoromaimmobiliare.it/disiscrizione?email={urllib.parse.quote(recipient_email)}"
+    prezzi_url = "https://fotoromaimmobiliare.it/prezzi-fotografo-immobiliare-roma"
     tracking_pixel_url = f"https://fotoromaimmobiliare.it/assets/logo.png?trk={urllib.parse.quote(recipient_email)}&cat={category_code}&t={int(time.time())}"
 
     html = f"""<!DOCTYPE html>
@@ -196,8 +195,8 @@ def build_html_template(target_type, name, zone, city, recipient_email):
           </tr>
           <tr>
             <td align="center">
-              <a href="https://fotoromaimmobiliare.it/portfolio" target="_blank" style="color: #B5B7AB; font-size: 11px; text-decoration: underline;">
-                Guarda il portfolio online su fotoromaimmobiliare.it
+              <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11px; text-decoration: underline;">
+                Consulta il listino prezzi ufficiale su fotoromaimmobiliare.it
               </a>
             </td>
           </tr>
@@ -213,7 +212,6 @@ def build_html_template(target_type, name, zone, city, recipient_email):
         <p style="margin: 0 0 4px 0;">Via Filippo Cremonesi 8, 00155 Roma • P.IVA 15883601002 • Consegna in 72h dal pagamento</p>
         <p style="margin: 0 0 12px 0;">Fotografia d'interni, Video 4K, Drone e Virtual Tour 360° per compravendite e alloggi turistici.</p>
         
-        <!-- SEZIONE ORIGINE CONTATTO E DISISCRIZIONE AUTOMATICA A 1 CLICK -->
         <div style="border-top: 1px solid #383A3F; padding-top: 10px; font-size: 10px; color: #6D6F66; text-align: center;">
           <p style="margin: 0 0 4px 0;">
             <em>Ricevi questa comunicazione informativa B2B in quanto la tua struttura o agenzia è presente su elenchi pubblici, portali di settore o registri di categoria.</em>
