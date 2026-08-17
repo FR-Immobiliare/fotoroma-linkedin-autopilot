@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (No Auto-Link Edition)
-- Nessun dominio con punto (es. Immobiliare.it -> Immobiliare) per evitare che i client email creino link blu automatici.
-- Stile CSS anti-link (text-decoration: none !important; color: inherit !important; pointer-events: none;)
+FotoRomaImmobiliare — B2B Direct Conversion Engine (Logo Facebook & Nuova Tagline)
+- Logo Facebook ad alto contrasto (spicca perfettamente su sfondo dark)
+- Nuova tagline: "FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI"
 """
 
 import os
@@ -23,6 +23,8 @@ SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 
 CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
+
+LOGO_URL = "https://fotoromaimmobiliare.it/logo_facebook_bright.jpg"
 
 PM_IMAGES = [
     "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg",
@@ -95,27 +97,16 @@ def build_html_template(target_type, name, zone, city):
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
   <title>FotoRomaImmobiliare</title>
-  <style>
-    /* Impedisce ai client email (Apple Mail, Gmail) di creare link blu automatici */
-    a[x-apple-data-detectors] {{
-      color: inherit !important;
-      text-decoration: none !important;
-      font-size: inherit !important;
-      font-family: inherit !important;
-      font-weight: inherit !important;
-      line-height: inherit !important;
-    }}
-  </style>
 </head>
 <body style="margin: 0; padding: 24px 0; background-color: #24262A; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F7F8E2; -webkit-font-smoothing: antialiased;">
   
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
     
-    <!-- HEADER BRAND -->
+    <!-- HEADER BRAND (LOGO FACEBOOK AD ALTO CONTRASTO) -->
     <tr>
-      <td align="center" style="padding: 24px 20px 18px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
-        <img src="https://fotoromaimmobiliare.it/assets/logo-jjOiLsXH.png" alt="FotoRomaImmobiliare" style="max-height: 42px; width: auto; display: block; margin-bottom: 6px;" />
-        <p style="margin: 0; color: #9A9C91; font-size: 10.5px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 600;">Studio Fotografico Immobiliare • Roma</p>
+      <td align="center" style="padding: 22px 20px 18px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
+        <img src="{LOGO_URL}" alt="FotoRomaImmobiliare" style="max-height: 52px; width: auto; display: block; margin-bottom: 8px; border-radius: 6px;" />
+        <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
 
