@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (Dedicated Hero per Target)
-- Agenzie Immobiliari: Hero Interior Luxury (hero-interior.jpg)
-- Property Manager / Airbnb: Hero Via Alessandria 91 (hero_airbnb_pm.jpg)
+FotoRomaImmobiliare — B2B Direct Conversion Engine (Hook Master & Photo Rotation)
+- Gancio psicologico forte in apertura (Zero convenevoli)
+- Rotazione casuale delle foto reali di prestigio per agenzie e property manager
+- Testo pulito e orientato ai benefici
 """
 
 import os
 import sys
 import csv
+import random
 import smtplib
+import urllib.parse
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
@@ -23,26 +26,48 @@ SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
 
+# FOTO A ROTAZIONE ONLINE
+PM_IMAGES = [
+    "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg",
+    "https://fotoromaimmobiliare.it/hero_pm/008%20-%20antoniopicariello.it%20-%20via%20candia%2065_-Modifica.jpg",
+    "https://fotoromaimmobiliare.it/hero_pm/038%20-%20antoniopicariello.it%20-%203343089759%20-%20%20Via%20Capo%20d%27Africa%2015_.jpg",
+    "https://fotoromaimmobiliare.it/hero_pm/218%20-%20antoniopicariello.it%20-%203343089759%20-%20%20Bea%20Suites_-2.jpg"
+]
+
+AGENCY_IMAGES = [
+    "https://fotoromaimmobiliare.it/hero_agency/ZZ6_8894.jpg",
+    "https://fotoromaimmobiliare.it/hero_agency/ZZ6_8893-2-2.jpg",
+    "https://fotoromaimmobiliare.it/hero_agency/DSC_1225.jpg",
+    "https://fotoromaimmobiliare.it/hero_agency/DSC_1200.jpg",
+    "https://fotoromaimmobiliare.it/hero_agency/DSC_2022-HDR-2.jpg"
+]
+
 def build_html_template(target_type, name, zone, city):
     if target_type == "PROPERTY_MANAGER":
-        badge = "SERVIZI VISIVI PER AIRBNB & AFFITTI BREVI"
-        hero_img = "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg"
-        subject = f"Servizi Fotografici e Virtual Tour per i vostri immobili a {city}"
-        headline = f"Fotografia d'interni professionale per alloggi Airbnb a {city}."
-        intro = f"Siamo uno <strong>studio di fotografia immobiliare specializzato</strong>: realizziamo servizi fotografici d'interni, riprese video e virtual tour 360° per aumentare il tasso di prenotazione e valorizzare i vostri alloggi su Airbnb e Booking."
+        badge = "AIRBNB · B&B · PROPERTY MANAGEMENT"
+        hero_img = random.choice(PM_IMAGES)
+        subject = f"Presentazione annunci e valorizzazione per gli immobili a {city}"
+        
+        # GANCIO FORTE
+        hook_question = f"Lo sapevate che l'80% degli ospiti su Airbnb decide se aprire un annuncio nei primi 3 secondi solo per via della prima foto?"
+        intro = f"Negli affitti brevi le foto non servono solo a mostrare la casa: servono ad <strong>alzare il prezzo medio per notte</strong>, aumentare le prenotazioni dirette ed evitare contestazioni al check-in."
+        
         points = [
-            ("Fotografia d'Interni per Airbnb (80 € / 150 €)", "Scatti luminosi ad alta definizione studiati per valorizzare gli spazi ed evitare contestazioni al check-in."),
-            ("Virtual Tour 360° Matterport (290 €)", "Visita virtuale immersiva per permettere agli ospiti e clienti di esplorare l'alloggio prima di prenotare."),
+            ("Fotografia d'Interni per Airbnb (80 € / 150 €)", "Scatti luminosi ad alta definizione studiati per valorizzare gli spazi e i dettagli di accoglienza."),
+            ("Virtual Tour 360° Matterport (290 €)", "Visita virtuale interattiva per permettere agli ospiti di esplorare l'alloggio prima di prenotare."),
             ("Video Reportage 4K & Drone", "Walkthrough completi e riprese aeree per alloggi di pregio e promozioni social."),
-            ("Consegna Rapida in 72h dal pagamento", "File già ottimizzati per i portali, pronti per essere caricati subito online.")
+            ("Consegna Rapida in 72h dal pagamento", "File già calibrati per i portali, pronti per essere caricati subito online.")
         ]
         whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{city}"
     else:
-        badge = "STUDIO DI FOTOGRAFIA IMMOBILIARE A ROMA"
-        hero_img = "https://fotoromaimmobiliare.it/assets/hero-interior-DPt5TKqx.jpg"
-        subject = f"Servizi Fotografici, Video 4K e Matterport 360° per le agenzie di {zone if zone else city}"
-        headline = f"Servizi Fotografici, Video 4K e Virtual Tour per i vostri annunci."
-        intro = f"Siamo uno <strong>studio fotografico specializzato nel Real Estate a Roma</strong>. Aiutiamo le agenzie a presentare gli immobili con la massima cura e trasparenza per <strong>filtrare i curiosi a monte</strong> e velocizzare le compravendite."
+        badge = "STUDIO FOTOGRAFICO IMMOBILIARE A ROMA"
+        hero_img = random.choice(AGENCY_IMAGES)
+        subject = f"Qualificazione visite e annunci per le agenzie di {zone if zone else city}"
+        
+        # GANCIO FORTE
+        hook_question = f"Quante visite a vuoto fate ogni mese con persone che poi dicono: 'Ah, ma dalle foto sembrava un'altra cosa'?"
+        intro = f"Il vero costo delle foto amatoriali o ingannevoli è il vostro tempo. Una fotografia professionale serve a <strong>filtrare i curiosi a monte</strong> e portare all'appuntamento solo acquirenti pronti a fare una proposta seria."
+        
         points = [
             ("Servizio Fotografico Full a 150 €", "Foto professionali d'interni ed esterni <strong>illimitate</strong> in alta definizione, per coprire ogni singolo ambiente."),
             ("Virtual Tour 360° Matterport (290 €)", "Scansione 3D interattiva per qualificare acquirenti fuori sede ed esteri prima di fissare il sopralluogo."),
@@ -51,6 +76,7 @@ def build_html_template(target_type, name, zone, city):
         ]
         whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{zone if zone else city}"
 
+    # Righe punti
     items_html = ""
     for title, desc in points:
         items_html += f"""
@@ -91,7 +117,7 @@ def build_html_template(target_type, name, zone, city):
       </td>
     </tr>
 
-    <!-- HERO IMAGE DEDICATA PER IL TARGET -->
+    <!-- HERO IMAGE ROTANTE -->
     <tr>
       <td style="padding: 0;">
         <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 240px; object-fit: cover; display: block;" />
@@ -107,9 +133,9 @@ def build_html_template(target_type, name, zone, city):
           {badge}
         </p>
 
-        <!-- TITOLO -->
-        <h1 style="margin: 0 0 14px 0; color: #F7F8E2; font-size: 20px; font-weight: 700; line-height: 1.35;">
-          {headline}
+        <!-- GANCIO FORTE / TITOLO -->
+        <h1 style="margin: 0 0 14px 0; color: #F7F8E2; font-size: 20px; font-weight: 800; line-height: 1.35;">
+          {hook_question}
         </h1>
         
         <!-- INTRO -->
