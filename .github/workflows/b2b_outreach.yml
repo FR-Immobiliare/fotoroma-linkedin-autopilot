@@ -2,9 +2,13 @@ name: B2B Outreach & Autonomous Growth Engine
 
 on:
   schedule:
-    # 1. Controllo Bounces, pulizia ed invio lotti: Lunedì, Mercoledì e Giovedì alle 07:30 UTC (09:30 Italiane)
+    # 1. Outreach del Mattino: Lunedì, Mercoledì e Giovedì alle 07:30 UTC (09:30 Italiane)
     - cron: '30 7 * * 1,3,4'
-    # 2. Ricerca nuovi lead e Report Settimanale: Mercoledì alle 15:00 UTC (17:00 Italiane)
+    # 2. Outreach della Sera (Stasera e ogni sera): Tutti i giorni alle 18:00 UTC (20:00 Italiane)
+    - cron: '0 18 * * *'
+    # 3. Report Notturno di Mezzanotte ad Antonio: Ogni sera alle 22:00 UTC (00:00 Italiane)
+    - cron: '0 22 * * *'
+    # 4. Report Settimanale Omnicanale: Mercoledì alle 15:00 UTC (17:00 Italiane)
     - cron: '0 15 * * 3'
   workflow_dispatch:
     inputs:
@@ -15,12 +19,13 @@ on:
         type: choice
         options:
           - 'outreach'
+          - 'midnight_report'
           - 'weekly_report'
           - 'clean_and_harvest'
 
 jobs:
   outreach_job:
-    if: github.event.schedule == '30 7 * * 1,3,4' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
+    if: github.event.schedule == '30 7 * * 1,3,4' || github.event.schedule == '0 18 * * *' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -54,6 +59,27 @@ jobs:
           git config user.email "bot@fotoromaimmobiliare.it"
           git add data/ 2>/dev/null || true
           git diff --staged --quiet || (git commit -m "Auto-pulizia bounce ed aggiornamento log outreach [skip ci]" && git push)
+
+  midnight_report_job:
+    if: github.event.schedule == '0 22 * * *' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'midnight_report')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Invia Report Giornaliero di Mezzanotte ad Antonio
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.gmail.com' }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
+          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
+        run: |
+          python scripts/daily_midnight_reporter.py
 
   weekly_report_job:
     if: github.event.schedule == '0 15 * * 3' || (github.event_name == 'workflow_dispatch' && (inputs.action_type == 'weekly_report' || inputs.action_type == 'clean_and_harvest'))
