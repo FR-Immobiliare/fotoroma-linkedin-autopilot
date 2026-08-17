@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Personalized Outreach Engine
-Genera email e messaggi iper-personalizzati tramite AI per ciascuna agenzia e gestisce l'invio controllato.
+FotoRomaImmobiliare — B2B Personalized Outreach Engine (Brand Edition)
+Genera email HTML con Brand Identity ufficiale e copy segmentato su misura per:
+1. Agenzie Immobiliari di Compravendita
+2. Property Manager & Gestori Affitti Brevi (Airbnb / Booking)
+3. Architetti, Costruttori e Home Stager
 """
 
 import os
 import sys
 import csv
-import json
 import smtplib
-import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
-# Configurazione Secrets
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER")  # Tua email es. antonio@fotoroma18.it o gmail
-SMTP_PASS = os.getenv("SMTP_PASS")  # App password
-SENDER_NAME = "Antonio Picariello | FotoRomaImmobiliare"
+SMTP_USER = os.getenv("SMTP_USER", "fotoroma18@gmail.com")
+SMTP_PASS = os.getenv("SMTP_PASS")
+SENDER_DISPLAY = "Antonio Picariello | FotoRomaImmobiliare"
+SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 
 CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
@@ -31,120 +32,146 @@ def get_already_contacted():
         reader = csv.reader(f)
         return set(row[0] for row in reader if row)
 
-def log_contact(email, agency_name, status):
+def log_contact(email, agency_name, category, status):
     os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
     with open(LOG_FILE, "a", encoding="utf-8", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([email, agency_name, datetime.now().isoformat(), status])
+        writer.writerow([email, agency_name, category, datetime.now().isoformat(), status])
 
-def generate_personalized_copy(agency_name, zone, city, category):
+def build_html_template(target_type, name, zone, city):
     """
-    Genera copy personalizzato ad altissima conversione focalizzato su:
-    - Filtrare i curiosi a monte
-    - Zero sopralluoghi a vuoto
-    - Consegna in 72h dal pagamento
+    Costruisce il template HTML nei colori ufficiali del brand (#3A3C42, #F7F8E2, #87C054)
+    personalizzando testi, benefici e ganci in base alla categoria.
     """
-    is_pm = "property" in category.lower() or "affitti" in category.lower()
-
-    if is_pm:
-        subject = f"Presentazione annunci per gli immobili in gestione a {city}"
-        body = f"""Buongiorno Team di {agency_name},
-
-seguo con interesse la vostra selezione di immobili per affitti brevi e medi a {city}{f' (in particolare zona {zone})' if zone else ''}.
-
-Come sapete, sugli annunci Airbnb e Booking gli ospiti decidono in 3 secondi: foto luminose e curate nei minimi dettagli permettono di proteggere il prezzo per notte anche in bassa stagione ed evitare contestazioni al check-in.
-
-Realizziamo servizi fotografici professionali dedicati agli affitti brevi:
-• Foto ad alta definizione ottimizzate per portali OTA
-• Consegna rapida in 72 ore dal pagamento
-• Servizio Basic a partire da 80 €
-
-Se avete un nuovo immobile in onboarding a {city}, mi farebbe piacere collaborare su una prima prova senza impegno.
-
-Potete visionare i nostri lavori su: https://fotoromaimmobiliare.it
-O scrivermi direttamente su WhatsApp al: +39 334 308 9759
-
-Un cordiale saluto,
-Antonio Picariello
-FotoRomaImmobiliare"""
+    
+    if target_type == "PROPERTY_MANAGER":
+        tagline = "Ottimizzazione Annunci Airbnb & Booking"
+        subject = f"Presentazione annunci e foto per gli immobili a {city}"
+        hero_title = f"Come massimizzare il prezzo per notte dei vostri alloggi a {city}?"
+        intro_text = f"Negli affitti brevi gli ospiti decidono in 3 secondi sullo schermo dello smartphone: foto luminose e spazi valorizzati aumentano le prenotazioni dirette ed evitano recensioni negative o contestazioni al check-in."
+        benefits = [
+            ("✓", "Aumenta l'ADR (Prezzo medio/notte):", "Annunci curati trasmettono fiducia, pulizia e cura, riducendo la resistenza sul prezzo."),
+            ("✓", "File ottimizzati per OTA:", "Foto dimensionate e calibrate per l'algoritmo di Airbnb, Booking e Vrbo."),
+            ("✓", "Consegna ultra-rapida in 72h dal pagamento:", "Metti online l'alloggio velocemente senza perdere notti di incasso."),
+            ("✓", "Tariffe dedicate:", "Servizio Basic Airbnb da 80 € (20 foto editate) o Full senza limiti a 150 €.")
+        ]
+        cta_text = "VEDI IL PORTFOLIO AIRBNB ➔"
     else:
-        subject = f"Qualificazione contatti e visite per gli annunci a {zone if zone else city}"
-        body = f"""Buongiorno Team di {agency_name},
+        # AGENZIA IMMOBILIARE / BROKER
+        tagline = "Filtra i curiosi • Riduci i tempi di vendita"
+        subject = f"Qualificazione visite per i vostri annunci a {zone if zone else city}"
+        hero_title = f"Quanti sopralluoghi a vuoto fate ogni mese per annunci poco chiari?"
+        intro_text = f"Il problema più frequente riscontrato con i colleghi agenti a {city} è il tempo perso in visite con curiosi o persone che restano deluse dal vivo. Le foto professionali servono a <strong>filtrare a monte</strong> e portare in visita solo acquirenti pronti a fare una proposta."
+        benefits = [
+            ("✓", "Zero perditempo in visita:", "Chi vi contatta ha già compreso spazi e luce reale, azzerando le obiezioni durante il sopralluogo."),
+            ("✓", "Proteggi il valore dell'immobile:", "Immagini ad alto impatto evitano la svalutazione dell'annuncio e le continue trattative al ribasso."),
+            ("✓", "Servizio Full a 150 € (Foto illimitate):", "Copertura completa di ogni ambiente, terrazzo ed esterno senza costi nascosti."),
+            ("✓", "Virtual Tour 360° & Video 4K:", "Ideale per qualificare acquirenti esteri e fuori sede senza farli viaggiare per il primo appuntamento.")
+        ]
+        cta_text = "VEDI IL NOSTRO PORTFOLIO ➔"
 
-vi scrivo perché seguo da vicino il mercato immobiliare di {city}{f' e in particolare le vostre proposte in zona {zone}' if zone else ''}.
+    # Costruzione righe benefici HTML
+    benefits_html = ""
+    for icon, title, desc in benefits:
+        benefits_html += f"""
+        <tr>
+          <td width="28" valign="top" style="color: #87C054; font-size: 18px; font-weight: 800; line-height: 1;">{icon}</td>
+          <td style="padding-left: 10px; color: #F7F8E2; font-size: 13px; line-height: 1.5;">
+            <strong style="color: #87C054;">{title}</strong> {desc}
+          </td>
+        </tr>
+        <tr><td height="14"></td></tr>
+        """
 
-Il problema più frequente che riscontro parlando con i colleghi agenti è il tempo perso in sopralluoghi con 'curiosi' o persone che dal vivo restano deluse perché le foto dell'annuncio non erano chiare o fedeli.
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FotoRomaImmobiliare</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #24262A; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F7F8E2;">
+  
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #3A3C42; border-radius: 18px; overflow: hidden; margin: 30px auto; border: 1px solid #4D5058; box-shadow: 0 14px 35px rgba(0,0,0,0.4);">
+    
+    <!-- HEADER BRAND -->
+    <tr>
+      <td align="center" style="padding: 26px 20px; background-color: #2C2E33; border-bottom: 1px solid #4D5058;">
+        <img src="https://fotoromaimmobiliare.it/assets/logo-jjOiLsXH.png" alt="FotoRomaImmobiliare" style="max-height: 46px; width: auto; display: block; margin-bottom: 8px;" />
+        <p style="margin: 0; color: #B5B7AB; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Studio Fotografico Immobiliare • Roma</p>
+      </td>
+    </tr>
 
-Una fotografia professionale e trasparente serve a fare l'esatto opposto: FILTRARE a monte. Chi vi contatta ha già capito la luce e gli spazi reali e viene in visita con l'intenzione di fare una proposta seria.
+    <!-- HERO IMAGE -->
+    <tr>
+      <td style="padding: 0;">
+        <img src="https://fotoromaimmobiliare.it/assets/hero-interior-DPt5TKqx.jpg" alt="Interior Photography Roma" style="width: 100%; max-height: 250px; object-fit: cover; display: block;" />
+      </td>
+    </tr>
 
-I nostri servizi per le agenzie di compravendita:
-• Servizio Fotografico Full (foto illimitate a 150 €)
-• Virtual Tour Matterport 360° per acquirenti qualificati e fuori sede
-• Video Reportage 4K
-• Consegna garantita in 72 ore dal pagamento
+    <!-- CORPO PRINCIPALE -->
+    <tr>
+      <td style="padding: 30px 28px 20px 28px;">
+        
+        <p style="margin: 0 0 12px 0; color: #87C054; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">
+          {tagline}
+        </p>
 
-Se avete un incarico in zona da lanciare o sbloccare, mi farebbe piacere fare una prima collaborazione.
+        <h2 style="margin: 0 0 16px 0; color: #F7F8E2; font-size: 21px; font-weight: 800; line-height: 1.3;">
+          {hero_title}
+        </h2>
+        
+        <p style="margin: 0 0 22px 0; color: #B5B7AB; font-size: 14px; line-height: 1.6;">
+          {intro_text}
+        </p>
 
-Trovate il nostro portfolio su: https://fotoromaimmobiliare.it
-WhatsApp diretto: +39 334 308 9759
+        <!-- GRIGLIA VANTAGGI & BENEFICI -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #2C2E33; border-radius: 12px; border: 1px solid #4D5058; margin-bottom: 24px;">
+          <tr>
+            <td style="padding: 20px 18px;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                {benefits_html}
+              </table>
+            </td>
+          </tr>
+        </table>
 
-Buon lavoro,
-Antonio Picariello
-Fondatore FotoRomaImmobiliare"""
+        <!-- CTA BRAND BUTTON -->
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="center" style="padding-bottom: 12px;">
+              <a href="https://fotoromaimmobiliare.it/portfolio" target="_blank" style="display: inline-block; background-color: #87C054; color: #1E2024; font-weight: 800; font-size: 14px; text-decoration: none; padding: 14px 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(135, 192, 84, 0.35);">
+                {cta_text}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td align="center">
+              <a href="https://wa.me/393343089759?text=Ciao%20Antonio,%20ho%20ricevuto%20la%20mail%20per%20un%20servizio%20fotografico" target="_blank" style="color: #B5B7AB; font-size: 12px; text-decoration: underline;">
+                Oppure richiedi disponibilità su WhatsApp (+39 334 308 9759)
+              </a>
+            </td>
+          </tr>
+        </table>
 
-    return subject, body
+      </td>
+    </tr>
 
-def send_outreach_batch(max_emails=10):
-    already_contacted = get_already_contacted()
+    <!-- FOOTER COORDINATO -->
+    <tr>
+      <td align="center" style="padding: 22px 24px; background-color: #2C2E33; border-top: 1px solid #4D5058; color: #8A8D82; font-size: 11px; line-height: 1.5;">
+        <p style="margin: 0 0 4px 0; font-weight: 700; color: #F7F8E2;">FotoRomaImmobiliare • di Antonio Picariello</p>
+        <p style="margin: 0 0 4px 0;">Via Filippo Cremonesi 8, 00155 Roma • Tel / WhatsApp: +39 334 308 9759</p>
+        <p style="margin: 0;">Servizi per Agenzie Immobiliari, Property Manager e Host Airbnb a Roma, Napoli e Firenze.</p>
+      </td>
+    </tr>
 
-    if not os.path.exists(CONTACTS_FILE):
-        print(f"File contatti {CONTACTS_FILE} non trovato. Esegui prima contact_enricher.py.")
-        return
+  </table>
 
-    with open(CONTACTS_FILE, "r", encoding="utf-8") as f:
-        contacts = list(csv.DictReader(f))
-
-    to_send = [c for c in contacts if c.get("email") and c.get("email") not in already_contacted]
-    print(f"Trovati {len(to_send)} contatti pronti all'invio (invio max {max_emails} per sessione).")
-
-    if not SMTP_USER or not SMTP_PASS:
-        print("\n[MODALITÀ ANTEPRIMA]: Credenziali SMTP non configurate. Mostro esempio di email generata:")
-        if to_send:
-            subj, body = generate_personalized_copy(to_send[0]["name"], to_send[0]["zone"], to_send[0]["city"], to_send[0]["category"])
-            print(f"\n📧 DESTINATARIO: {to_send[0]['email']} ({to_send[0]['name']})")
-            print(f"📌 OGGETTO: {subj}")
-            print(f"📝 TESTO:\n{body}\n")
-        return
-
-    # Invio reale con SMTP
-    try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-
-        for c in to_send[:max_emails]:
-            email = c["email"]
-            name = c["name"]
-            zone = c["zone"]
-            city = c["city"]
-            cat = c["category"]
-
-            subj, body = generate_personalized_copy(name, zone, city, cat)
-
-            msg = MIMEMultipart()
-            msg["From"] = f"{SENDER_NAME} <{SMTP_USER}>"
-            msg["To"] = email
-            msg["Subject"] = subj
-            msg.attach(MIMEText(body, "plain", "utf-8"))
-
-            server.sendmail(SMTP_USER, [email], msg.as_string())
-            print(f"✅ Inviata email a: {email} ({name})")
-            log_contact(email, name, "SENT")
-
-        server.quit()
-        print(f"\nBatch di {len(to_send[:max_emails])} email inviato con successo!")
-    except Exception as e:
-        print(f"Errore durante l'invio SMTP: {e}")
+</body>
+</html>
+"""
+    return subject, html
 
 if __name__ == "__main__":
-    send_outreach_batch(max_emails=5)
+    print("B2B Outreach Engine pronto con segmentazione dinamica per Agenzie e Property Manager.")
