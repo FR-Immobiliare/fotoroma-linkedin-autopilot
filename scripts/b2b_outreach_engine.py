@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (Logo Ufficiale Bianco FRI)
-- Logo VERO FotoRomaImmobiliare renderizzato in bianco/crema ad altissima definizione
+FotoRomaImmobiliare — B2B Direct Conversion Engine (Logo Ufficiale con Verde Brand)
+- Logo VERO con mirino VERDE BRAND e scritte chiare su sfondo dark
 - Tagline: "FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI"
 """
 
@@ -25,8 +25,8 @@ SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
 
-# Carica il logo ufficiale FotoRomaImmobiliare in Base64 (Bianco Puro)
-LOGO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/logo_fotoroma_white.png"
+# Carica il logo perfetto con mirino verde in Base64
+LOGO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/logo_fotoroma_perfect_green.png"
 with open(LOGO_PATH, "rb") as f:
     LOGO_B64 = f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
 
@@ -106,10 +106,10 @@ def build_html_template(target_type, name, zone, city):
   
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
     
-    <!-- HEADER BRAND (LOGO VERO FOTOROMA BIANCO/CREMA) -->
+    <!-- HEADER BRAND (LOGO ORIGINALE CON MIRINO VERDE) -->
     <tr>
-      <td align="center" style="padding: 24px 20px 18px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
-        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 64px; max-height: 64px; width: auto; display: block; margin-bottom: 8px;" />
+      <td align="center" style="padding: 22px 20px 16px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
+        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 72px; max-height: 72px; width: auto; display: block; margin-bottom: 6px;" />
         <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
