@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (Logo Facebook & Nuova Tagline)
-- Logo Facebook ad alto contrasto (spicca perfettamente su sfondo dark)
-- Nuova tagline: "FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI"
+FotoRomaImmobiliare — B2B Direct Conversion Engine (Embedded Logo & Group Syndication)
+- Logo incorporato in Base64 nativo (visibile al 100% su Apple Mail e Gmail senza blocchi CDN)
+- Supporto syndication gruppi Facebook/LinkedIn
 """
 
 import os
 import sys
 import csv
+import base64
 import random
 import smtplib
 from email.mime.text import MIMEText
@@ -24,7 +25,13 @@ SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
 
-LOGO_URL = "https://fotoromaimmobiliare.it/logo_facebook_bright.jpg"
+# Carica logo in Base64 per garantire il 100% di visibilità senza dipendere dal web
+LOGO_PATH = "/Users/antoniopicariello/Downloads/linkedin_assets/fb_profile_logo.jpg"
+if os.path.exists(LOGO_PATH):
+    with open(LOGO_PATH, "rb") as f:
+        LOGO_B64 = f"data:image/jpeg;base64,{base64.b64encode(f.read()).decode('utf-8')}"
+else:
+    LOGO_B64 = "https://fotoromaimmobiliare.it/assets/logo-jjOiLsXH.png"
 
 PM_IMAGES = [
     "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg",
@@ -102,10 +109,10 @@ def build_html_template(target_type, name, zone, city):
   
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
     
-    <!-- HEADER BRAND (LOGO FACEBOOK AD ALTO CONTRASTO) -->
+    <!-- HEADER BRAND (LOGO INCORPORATO AD ALTA DEFINIZIONE) -->
     <tr>
-      <td align="center" style="padding: 22px 20px 18px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
-        <img src="{LOGO_URL}" alt="FotoRomaImmobiliare" style="max-height: 52px; width: auto; display: block; margin-bottom: 8px; border-radius: 6px;" />
+      <td align="center" style="padding: 24px 20px 18px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
+        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 56px; max-height: 56px; width: auto; display: block; margin-bottom: 8px; border-radius: 8px;" />
         <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
