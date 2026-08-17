@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (Hook Master & Photo Rotation)
-- Gancio psicologico forte in apertura (Zero convenevoli)
-- Rotazione casuale delle foto reali di prestigio per agenzie e property manager
-- Testo pulito e orientato ai benefici
+FotoRomaImmobiliare — B2B Direct Conversion Engine (No Auto-Link Edition)
+- Nessun dominio con punto (es. Immobiliare.it -> Immobiliare) per evitare che i client email creino link blu automatici.
+- Stile CSS anti-link (text-decoration: none !important; color: inherit !important; pointer-events: none;)
 """
 
 import os
@@ -11,7 +10,6 @@ import sys
 import csv
 import random
 import smtplib
-import urllib.parse
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
@@ -26,7 +24,6 @@ SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
 
-# FOTO A ROTAZIONE ONLINE
 PM_IMAGES = [
     "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg",
     "https://fotoromaimmobiliare.it/hero_pm/008%20-%20antoniopicariello.it%20-%20via%20candia%2065_-Modifica.jpg",
@@ -47,36 +44,29 @@ def build_html_template(target_type, name, zone, city):
         badge = "AIRBNB · B&B · PROPERTY MANAGEMENT"
         hero_img = random.choice(PM_IMAGES)
         subject = f"Presentazione annunci e valorizzazione per gli immobili a {city}"
-        
-        # GANCIO FORTE
         hook_question = f"Lo sapevate che l'80% degli ospiti su Airbnb decide se aprire un annuncio nei primi 3 secondi solo per via della prima foto?"
         intro = f"Negli affitti brevi le foto non servono solo a mostrare la casa: servono ad <strong>alzare il prezzo medio per notte</strong>, aumentare le prenotazioni dirette ed evitare contestazioni al check-in."
-        
         points = [
             ("Fotografia d'Interni per Airbnb (80 € / 150 €)", "Scatti luminosi ad alta definizione studiati per valorizzare gli spazi e i dettagli di accoglienza."),
             ("Virtual Tour 360° Matterport (290 €)", "Visita virtuale interattiva per permettere agli ospiti di esplorare l'alloggio prima di prenotare."),
             ("Video Reportage 4K & Drone", "Walkthrough completi e riprese aeree per alloggi di pregio e promozioni social."),
-            ("Consegna Rapida in 72h dal pagamento", "File già calibrati per i portali, pronti per essere caricati subito online.")
+            ("Consegna Rapida in 72h dal pagamento", "Tutti i file consegnati già calibrati per Airbnb, Booking e Vrbo, pronti per essere caricati subito.")
         ]
         whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{city}"
     else:
         badge = "STUDIO FOTOGRAFICO IMMOBILIARE A ROMA"
         hero_img = random.choice(AGENCY_IMAGES)
         subject = f"Qualificazione visite e annunci per le agenzie di {zone if zone else city}"
-        
-        # GANCIO FORTE
         hook_question = f"Quante visite a vuoto fate ogni mese con persone che poi dicono: 'Ah, ma dalle foto sembrava un'altra cosa'?"
         intro = f"Il vero costo delle foto amatoriali o ingannevoli è il vostro tempo. Una fotografia professionale serve a <strong>filtrare i curiosi a monte</strong> e portare all'appuntamento solo acquirenti pronti a fare una proposta seria."
-        
         points = [
             ("Servizio Fotografico Full a 150 €", "Foto professionali d'interni ed esterni <strong>illimitate</strong> in alta definizione, per coprire ogni singolo ambiente."),
             ("Virtual Tour 360° Matterport (290 €)", "Scansione 3D interattiva per qualificare acquirenti fuori sede ed esteri prima di fissare il sopralluogo."),
             ("Video Reportage 4K & Riprese Drone (150 €)", "Video emozionali e riprese aeree per dare massimo risalto agli annunci di fascia alta."),
-            ("Consegna in 72h dal pagamento", "Tutti i file consegnati già calibrati e pronti per Immobiliare.it, Idealista e portali agenzia.")
+            ("Consegna in 72h dal pagamento", "Tutti i file consegnati già calibrati per i principali portali immobiliari e sito di agenzia.")
         ]
         whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{zone if zone else city}"
 
-    # Righe punti
     items_html = ""
     for title, desc in points:
         items_html += f"""
@@ -103,7 +93,19 @@ def build_html_template(target_type, name, zone, city):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
   <title>FotoRomaImmobiliare</title>
+  <style>
+    /* Impedisce ai client email (Apple Mail, Gmail) di creare link blu automatici */
+    a[x-apple-data-detectors] {{
+      color: inherit !important;
+      text-decoration: none !important;
+      font-size: inherit !important;
+      font-family: inherit !important;
+      font-weight: inherit !important;
+      line-height: inherit !important;
+    }}
+  </style>
 </head>
 <body style="margin: 0; padding: 24px 0; background-color: #24262A; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F7F8E2; -webkit-font-smoothing: antialiased;">
   
