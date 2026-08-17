@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (Personalized WhatsApp Hook)
-Testo WhatsApp precompilato: "Ciao, ti contatto dall'email di FotoRomaImmobiliare.it..."
+FotoRomaImmobiliare — B2B Direct Conversion Engine (Dedicated Hero per Target)
+- Agenzie Immobiliari: Hero Interior Luxury (hero-interior.jpg)
+- Property Manager / Airbnb: Hero Via Alessandria 91 (hero_airbnb_pm.jpg)
 """
 
 import os
@@ -25,6 +26,7 @@ LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.
 def build_html_template(target_type, name, zone, city):
     if target_type == "PROPERTY_MANAGER":
         badge = "SERVIZI VISIVI PER AIRBNB & AFFITTI BREVI"
+        hero_img = "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg"
         subject = f"Servizi Fotografici e Virtual Tour per i vostri immobili a {city}"
         headline = f"Fotografia d'interni professionale per alloggi Airbnb a {city}."
         intro = f"Siamo uno <strong>studio di fotografia immobiliare specializzato</strong>: realizziamo servizi fotografici d'interni, riprese video e virtual tour 360° per aumentare il tasso di prenotazione e valorizzare i vostri alloggi su Airbnb e Booking."
@@ -37,6 +39,7 @@ def build_html_template(target_type, name, zone, city):
         whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{city}"
     else:
         badge = "STUDIO DI FOTOGRAFIA IMMOBILIARE A ROMA"
+        hero_img = "https://fotoromaimmobiliare.it/assets/hero-interior-DPt5TKqx.jpg"
         subject = f"Servizi Fotografici, Video 4K e Matterport 360° per le agenzie di {zone if zone else city}"
         headline = f"Servizi Fotografici, Video 4K e Virtual Tour per i vostri annunci."
         intro = f"Siamo uno <strong>studio fotografico specializzato nel Real Estate a Roma</strong>. Aiutiamo le agenzie a presentare gli immobili con la massima cura e trasparenza per <strong>filtrare i curiosi a monte</strong> e velocizzare le compravendite."
@@ -88,10 +91,10 @@ def build_html_template(target_type, name, zone, city):
       </td>
     </tr>
 
-    <!-- HERO IMAGE -->
+    <!-- HERO IMAGE DEDICATA PER IL TARGET -->
     <tr>
       <td style="padding: 0;">
-        <img src="https://fotoromaimmobiliare.it/assets/hero-interior-DPt5TKqx.jpg" alt="Interior Photography Roma" style="width: 100%; max-height: 230px; object-fit: cover; display: block;" />
+        <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 240px; object-fit: cover; display: block;" />
       </td>
     </tr>
 
