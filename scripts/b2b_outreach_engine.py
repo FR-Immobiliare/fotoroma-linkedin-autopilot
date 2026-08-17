@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (Chiarezza Immediata)
-Spiega nei primi 3 secondi esattamente CHI SIAMO e COSA FACCIAMO (Fotografia, Video 4K, Drone e Virtual Tour Matterport).
+FotoRomaImmobiliare — B2B Direct Conversion Engine (Personalized WhatsApp Hook)
+Testo WhatsApp precompilato: "Ciao, ti contatto dall'email di FotoRomaImmobiliare.it..."
 """
 
 import os
@@ -34,7 +34,7 @@ def build_html_template(target_type, name, zone, city):
             ("Video Reportage 4K & Drone", "Walkthrough completi e riprese aeree per alloggi di pregio e promozioni social."),
             ("Consegna Rapida in 72h dal pagamento", "File già ottimizzati per i portali, pronti per essere caricati subito online.")
         ]
-        whatsapp_msg = "Ciao%20Antonio,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20per%20affitti%20brevi"
+        whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{city}"
     else:
         badge = "STUDIO DI FOTOGRAFIA IMMOBILIARE A ROMA"
         subject = f"Servizi Fotografici, Video 4K e Matterport 360° per le agenzie di {zone if zone else city}"
@@ -46,9 +46,8 @@ def build_html_template(target_type, name, zone, city):
             ("Video Reportage 4K & Riprese Drone (150 €)", "Video emozionali e riprese aeree per dare massimo risalto agli annunci di fascia alta."),
             ("Consegna in 72h dal pagamento", "Tutti i file consegnati già calibrati e pronti per Immobiliare.it, Idealista e portali agenzia.")
         ]
-        whatsapp_msg = f"Ciao%20Antonio,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{zone if zone else city}"
+        whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{zone if zone else city}"
 
-    # Righe con spunta verde SVG e titolo in verde brand
     items_html = ""
     for title, desc in points:
         items_html += f"""
@@ -105,17 +104,17 @@ def build_html_template(target_type, name, zone, city):
           {badge}
         </p>
 
-        <!-- TITOLO CHIARO SU COSA FACCIAMO -->
+        <!-- TITOLO -->
         <h1 style="margin: 0 0 14px 0; color: #F7F8E2; font-size: 20px; font-weight: 700; line-height: 1.35;">
           {headline}
         </h1>
         
-        <!-- INTRO CHE CHIARISCE IL SERVIZIO E IL VALORE -->
+        <!-- INTRO -->
         <p style="margin: 0 0 22px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.6;">
           {intro}
         </p>
 
-        <!-- CARD SERVIZI OFFERTI CON PREZZI E VANTAGGI -->
+        <!-- CARD SERVIZI -->
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #2B2D31; border-radius: 14px; border: 1px solid #42454B; margin-bottom: 24px;">
           <tr>
             <td style="padding: 20px 18px 6px 18px;">
