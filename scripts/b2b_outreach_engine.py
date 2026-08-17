@@ -2,9 +2,9 @@
 """
 FotoRomaImmobiliare — B2B Smart Outreach Engine
 Ottimizzazioni:
-1. Reputazione & Anti-Spam: Invio scaglionato (batch da 35-50 email/giorno con intervalli randomici 25-45s)
-2. Footer Compliance GDPR: spiegazione origine contatto (elenchi pubblici/portali) + link disiscrizione istantanea
-3. Tracciamento contatti contattati per evitare doppi invii
+1. Logo ingrandito e prominente (senza alterare la dimensione del box header)
+2. Reputazione & Anti-Spam: Invio scaglionato (batch da 35-50 email/giorno con intervalli randomici 25-45s)
+3. Footer Compliance GDPR: spiegazione origine contatto + link disiscrizione istantanea
 """
 
 import os
@@ -35,11 +35,8 @@ LOG_FILE = os.path.join(DATA_DIR, "contacted_log.csv")
 UNSUBSCRIBE_FILE = os.path.join(DATA_DIR, "unsubscribed.csv")
 
 LOGO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/logo_fotoroma_perfect_green.png"
-if os.path.exists(LOGO_PATH):
-    with open(LOGO_PATH, "rb") as f:
-        LOGO_B64 = f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
-else:
-    LOGO_B64 = "https://fotoromaimmobiliare.it/assets/logo-jjOiLsXH.png"
+with open(LOGO_PATH, "rb") as f:
+    LOGO_B64 = f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
 
 PM_IMAGES = [
     "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg",
@@ -133,10 +130,10 @@ def build_html_template(target_type, name, zone, city, recipient_email):
   
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
     
-    <!-- HEADER BRAND CON LOGO UFFICIALE E MIRINO VERDE -->
+    <!-- HEADER BRAND (LOGO INGRANDITO SENZA ALTERARE IL BOX) -->
     <tr>
-      <td align="center" style="padding: 22px 20px 16px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
-        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 72px; max-height: 72px; width: auto; display: block; margin-bottom: 6px;" />
+      <td align="center" style="padding: 20px 20px 14px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
+        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 82px; max-height: 82px; width: auto; display: block; margin: 0 auto 6px auto;" />
         <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
@@ -230,77 +227,3 @@ def build_html_template(target_type, name, zone, city, recipient_email):
 """
     return subject, html
 
-def run_daily_outreach_batch(batch_size=40):
-    print(f"[{datetime.now().isoformat()}] Avvio Batch Giornaliero Outreach ({batch_size} email max)...")
-    already_sent = load_already_contacted()
-    unsubscribed = load_unsubscribed()
-
-    # Raccogli prospect dai file CSV
-    all_prospects = []
-    for fpath in CONTACTS_FILES:
-        if os.path.exists(fpath):
-            with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    email = row.get("Email Contatto") or row.get("Email") or row.get("email")
-                    if email and "@" in email and "." in email:
-                        email = email.strip().lower()
-                        if email not in already_sent and email not in unsubscribed:
-                            all_prospects.append({
-                                "email": email,
-                                "name": row.get("Nome Struttura / Host") or row.get("Nome Struttura / Annuncio") or row.get("Nome") or "Gentile Partner",
-                                "type": row.get("Tipologia") or "AGENZIA",
-                                "city": row.get("Città / Area") or row.get("Città / Comune") or row.get("Città") or "Roma",
-                                "zone": row.get("Quartiere / Micro-Zona") or row.get("Quartiere / Zona") or "Centro"
-                            })
-
-    print(f"Totale prospect pronti per l'invio: {len(all_prospects)}")
-    if not all_prospects:
-        print("Nessun nuovo prospect da contattare in questo ciclo.")
-        return 0
-
-    batch = all_prospects[:batch_size]
-    sent_count = 0
-
-    try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-
-        for p in batch:
-            subject, html = build_html_template(p["type"], p["name"], p["zone"], p["city"], p["email"])
-            msg = MIMEMultipart("alternative")
-            msg["To"] = p["email"]
-            msg["Subject"] = subject
-            msg["From"] = f"{SENDER_DISPLAY} <{SENDER_EMAIL}>"
-            msg["Reply-To"] = SENDER_EMAIL
-            msg.attach(MIMEText(html, "html", "utf-8"))
-
-            server.sendmail(SMTP_USER, [p["email"]], msg.as_string())
-            sent_count += 1
-            print(f"[{sent_count}/{len(batch)}] Inviata email a: {p['email']} ({p['city']} - {p['zone']})")
-
-            # Salva nel log
-            with open(LOG_FILE, "a", encoding="utf-8", newline="") as f_log:
-                writer = csv.writer(f_log)
-                writer.writerow([p["email"], p["name"], p["city"], datetime.now().isoformat(), "INVIATO"])
-
-            # Intervallo anti-spam randomizzato (25 - 45 secondi)
-            if sent_count < len(batch):
-                sleep_sec = random.randint(25, 45)
-                time.sleep(sleep_sec)
-
-        server.quit()
-    except Exception as e:
-        print(f"Errore durante l'invio batch: {e}")
-
-    print(f"✅ Batch completato con successo: {sent_count} email inviate.")
-    return sent_count
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "--test":
-        print("Test singolo...")
-        s, h = build_html_template("AGENZIA", "Test Studio", "Prati", "Roma", "antonio.picariello@icloud.com")
-        print("Template generato correttamente.")
-    else:
-        run_daily_outreach_batch(batch_size=40)
