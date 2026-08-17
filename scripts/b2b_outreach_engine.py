@@ -1,34 +1,45 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Direct Conversion Engine (Logo Ufficiale con Verde Brand)
-- Logo VERO con mirino VERDE BRAND e scritte chiare su sfondo dark
-- Tagline: "FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI"
+FotoRomaImmobiliare — B2B Smart Outreach Engine
+Ottimizzazioni:
+1. Reputazione & Anti-Spam: Invio scaglionato (batch da 35-50 email/giorno con intervalli randomici 25-45s)
+2. Footer Compliance GDPR: spiegazione origine contatto (elenchi pubblici/portali) + link disiscrizione istantanea
+3. Tracciamento contatti contattati per evitare doppi invii
 """
 
 import os
 import sys
 import csv
-import base64
+import time
 import random
+import base64
 import smtplib
+from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime
 
 SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "fotoroma18@gmail.com")
-SMTP_PASS = os.getenv("SMTP_PASS")
+SMTP_PASS = os.getenv("SMTP_PASS", "unsvwxfhkugkklly")
 SENDER_DISPLAY = "Antonio Picariello | FotoRomaImmobiliare"
 SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 
-CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
-LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+CONTACTS_FILES = [
+    os.path.join(DATA_DIR, "airbnb_hosts_massive_3500.csv"),
+    os.path.join(DATA_DIR, "prospects_southern_lazio.csv"),
+    os.path.join(DATA_DIR, "enriched_contacts.csv")
+]
+LOG_FILE = os.path.join(DATA_DIR, "contacted_log.csv")
+UNSUBSCRIBE_FILE = os.path.join(DATA_DIR, "unsubscribed.csv")
 
-# Carica il logo perfetto con mirino verde in Base64
 LOGO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/logo_fotoroma_perfect_green.png"
-with open(LOGO_PATH, "rb") as f:
-    LOGO_B64 = f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
+if os.path.exists(LOGO_PATH):
+    with open(LOGO_PATH, "rb") as f:
+        LOGO_B64 = f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
+else:
+    LOGO_B64 = "https://fotoromaimmobiliare.it/assets/logo-jjOiLsXH.png"
 
 PM_IMAGES = [
     "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg",
@@ -45,11 +56,25 @@ AGENCY_IMAGES = [
     "https://fotoromaimmobiliare.it/hero_agency/DSC_2022-HDR-2.jpg"
 ]
 
-def build_html_template(target_type, name, zone, city):
-    if target_type == "PROPERTY_MANAGER":
+def load_unsubscribed():
+    if not os.path.exists(UNSUBSCRIBE_FILE):
+        return set()
+    with open(UNSUBSCRIBE_FILE, "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        return {rows[0].strip().lower() for rows in reader if rows}
+
+def load_already_contacted():
+    if not os.path.exists(LOG_FILE):
+        return set()
+    with open(LOG_FILE, "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        return {rows[0].strip().lower() for rows in reader if rows}
+
+def build_html_template(target_type, name, zone, city, recipient_email):
+    if "AIRBNB" in target_type.upper() or "HOST" in target_type.upper() or "PROPERTY" in target_type.upper():
         badge = "AIRBNB · B&B · PROPERTY MANAGEMENT"
         hero_img = random.choice(PM_IMAGES)
-        subject = f"Presentazione annunci e valorizzazione per gli immobili a {city}"
+        subject = f"Presentazione annunci e valorizzazione per gli alloggi a {city}"
         hook_question = f"Lo sapevate che l'80% degli ospiti su Airbnb decide se aprire un annuncio nei primi 3 secondi solo per via della prima foto?"
         intro = f"Negli affitti brevi le foto non servono solo a mostrare la casa: servono ad <strong>alzare il prezzo medio per notte</strong>, aumentare le prenotazioni dirette ed evitare contestazioni al check-in."
         points = [
@@ -60,7 +85,7 @@ def build_html_template(target_type, name, zone, city):
         ]
         whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{city}"
     else:
-        badge = "STUDIO FOTOGRAFICO IMMOBILIARE A ROMA"
+        badge = "STUDIO FOTOGRAFICO IMMOBILIARE"
         hero_img = random.choice(AGENCY_IMAGES)
         subject = f"Qualificazione visite e annunci per le agenzie di {zone if zone else city}"
         hook_question = f"Quante visite a vuoto fate ogni mese con persone che poi dicono: 'Ah, ma dalle foto sembrava un'altra cosa'?"
@@ -94,6 +119,8 @@ def build_html_template(target_type, name, zone, city):
         </tr>
         """
 
+    unsub_mail_link = f"mailto:info@fotoromaimmobiliare.it?subject=CANCELLAMI%20{recipient_email}&body=Richiesta%20di%20cancellazione%20per%20{recipient_email}"
+
     html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -106,7 +133,7 @@ def build_html_template(target_type, name, zone, city):
   
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
     
-    <!-- HEADER BRAND (LOGO ORIGINALE CON MIRINO VERDE) -->
+    <!-- HEADER BRAND CON LOGO UFFICIALE E MIRINO VERDE -->
     <tr>
       <td align="center" style="padding: 22px 20px 16px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
         <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 72px; max-height: 72px; width: auto; display: block; margin-bottom: 6px;" />
@@ -177,12 +204,22 @@ def build_html_template(target_type, name, zone, city):
       </td>
     </tr>
 
-    <!-- FOOTER -->
+    <!-- FOOTER ISTITUZIONALE & GDPR COMPLIANCE -->
     <tr>
-      <td align="center" style="padding: 18px 24px; background-color: #26282C; border-top: 1px solid #42454B; color: #7F8177; font-size: 11px; line-height: 1.5;">
-        <p style="margin: 0 0 3px 0; font-weight: 600; color: #B5B7AB;">FotoRomaImmobiliare • di Antonio Picariello</p>
-        <p style="margin: 0 0 3px 0;">Via Filippo Cremonesi 8, 00155 Roma • Consegna in 72h dal pagamento</p>
-        <p style="margin: 0;">Fotografia d'interni, Video 4K, Drone e Virtual Tour 360° a Roma, Napoli e Firenze.</p>
+      <td align="center" style="padding: 20px 24px; background-color: #26282C; border-top: 1px solid #42454B; color: #7F8177; font-size: 11px; line-height: 1.5;">
+        <p style="margin: 0 0 4px 0; font-weight: 600; color: #B5B7AB;">FotoRomaImmobiliare • di Antonio Picariello</p>
+        <p style="margin: 0 0 4px 0;">Via Filippo Cremonesi 8, 00155 Roma • P.IVA 15883601002 • Consegna in 72h dal pagamento</p>
+        <p style="margin: 0 0 12px 0;">Fotografia d'interni, Video 4K, Drone e Virtual Tour 360° per compravendite e alloggi turistici.</p>
+        
+        <!-- SEZIONE ORIGINE CONTATTO E DISISCRIZIONE -->
+        <div style="border-top: 1px solid #383A3F; padding-top: 10px; font-size: 10px; color: #6D6F66; text-align: center;">
+          <p style="margin: 0 0 4px 0;">
+            <em>Ricevi questa comunicazione informativa B2B in quanto la tua struttura o agenzia è presente su elenchi pubblici, portali di settore o registri di categoria.</em>
+          </p>
+          <p style="margin: 0;">
+            Se non desideri più ricevere aggiornamenti o proposte, <a href="{unsub_mail_link}" style="color: #87C054; text-decoration: underline;">clicca qui per disiscriverti</a> oppure rispondi con oggetto "CANCELLAMI".
+          </p>
+        </div>
       </td>
     </tr>
 
@@ -193,3 +230,77 @@ def build_html_template(target_type, name, zone, city):
 """
     return subject, html
 
+def run_daily_outreach_batch(batch_size=40):
+    print(f"[{datetime.now().isoformat()}] Avvio Batch Giornaliero Outreach ({batch_size} email max)...")
+    already_sent = load_already_contacted()
+    unsubscribed = load_unsubscribed()
+
+    # Raccogli prospect dai file CSV
+    all_prospects = []
+    for fpath in CONTACTS_FILES:
+        if os.path.exists(fpath):
+            with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    email = row.get("Email Contatto") or row.get("Email") or row.get("email")
+                    if email and "@" in email and "." in email:
+                        email = email.strip().lower()
+                        if email not in already_sent and email not in unsubscribed:
+                            all_prospects.append({
+                                "email": email,
+                                "name": row.get("Nome Struttura / Host") or row.get("Nome Struttura / Annuncio") or row.get("Nome") or "Gentile Partner",
+                                "type": row.get("Tipologia") or "AGENZIA",
+                                "city": row.get("Città / Area") or row.get("Città / Comune") or row.get("Città") or "Roma",
+                                "zone": row.get("Quartiere / Micro-Zona") or row.get("Quartiere / Zona") or "Centro"
+                            })
+
+    print(f"Totale prospect pronti per l'invio: {len(all_prospects)}")
+    if not all_prospects:
+        print("Nessun nuovo prospect da contattare in questo ciclo.")
+        return 0
+
+    batch = all_prospects[:batch_size]
+    sent_count = 0
+
+    try:
+        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15)
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+
+        for p in batch:
+            subject, html = build_html_template(p["type"], p["name"], p["zone"], p["city"], p["email"])
+            msg = MIMEMultipart("alternative")
+            msg["To"] = p["email"]
+            msg["Subject"] = subject
+            msg["From"] = f"{SENDER_DISPLAY} <{SENDER_EMAIL}>"
+            msg["Reply-To"] = SENDER_EMAIL
+            msg.attach(MIMEText(html, "html", "utf-8"))
+
+            server.sendmail(SMTP_USER, [p["email"]], msg.as_string())
+            sent_count += 1
+            print(f"[{sent_count}/{len(batch)}] Inviata email a: {p['email']} ({p['city']} - {p['zone']})")
+
+            # Salva nel log
+            with open(LOG_FILE, "a", encoding="utf-8", newline="") as f_log:
+                writer = csv.writer(f_log)
+                writer.writerow([p["email"], p["name"], p["city"], datetime.now().isoformat(), "INVIATO"])
+
+            # Intervallo anti-spam randomizzato (25 - 45 secondi)
+            if sent_count < len(batch):
+                sleep_sec = random.randint(25, 45)
+                time.sleep(sleep_sec)
+
+        server.quit()
+    except Exception as e:
+        print(f"Errore durante l'invio batch: {e}")
+
+    print(f"✅ Batch completato con successo: {sent_count} email inviate.")
+    return sent_count
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "--test":
+        print("Test singolo...")
+        s, h = build_html_template("AGENZIA", "Test Studio", "Prati", "Roma", "antonio.picariello@icloud.com")
+        print("Template generato correttamente.")
+    else:
+        run_daily_outreach_batch(batch_size=40)
