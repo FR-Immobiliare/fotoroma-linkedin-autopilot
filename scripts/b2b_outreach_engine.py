@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Smart Outreach Engine con Tracking Pixel & Analytics
-Include:
-1. Tracking Pixel invisibile (1x1 GIF) per tracciare le aperture reali per categoria e città
-2. Registrazione dettagliata categoria/data/apertura in contacted_log.csv
-3. Invio scaglionato anti-spam (35-50 email/gg con pause 25-45s)
+FotoRomaImmobiliare — B2B Smart Outreach Engine con 1-Click Unsubscribe Automatico
+1. Disiscrizione 100% Automatica via Web (fotoromaimmobiliare.it/disiscrizione?email=...)
+2. Casella mittente e ricezione ufficiale: info@fotoromaimmobiliare.it
+3. Tracciamento pixel e invio scaglionato anti-spam
 """
 
 import os
@@ -120,7 +119,8 @@ def build_html_template(target_type, name, zone, city, recipient_email):
         </tr>
         """
 
-    unsub_mail_link = f"mailto:info@fotoromaimmobiliare.it?subject=CANCELLAMI%20{recipient_email}&body=Richiesta%20di%20cancellazione%20per%20{recipient_email}"
+    # Link automatico 1-Click Unsubscribe sul sito web ufficiale FotoRomaImmobiliare.it
+    auto_unsub_url = f"https://fotoromaimmobiliare.it/disiscrizione?email={urllib.parse.quote(recipient_email)}"
     tracking_pixel_url = f"https://fotoromaimmobiliare.it/assets/logo.png?trk={urllib.parse.quote(recipient_email)}&cat={category_code}&t={int(time.time())}"
 
     html = f"""<!DOCTYPE html>
@@ -135,7 +135,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
   
   <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
     
-    <!-- HEADER BRAND -->
+    <!-- HEADER BRAND (LOGO ORIGINALE INGRANDITO) -->
     <tr>
       <td align="center" style="padding: 20px 20px 14px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
         <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 82px; max-height: 82px; width: auto; display: block; margin: 0 auto 6px auto;" />
@@ -206,19 +206,20 @@ def build_html_template(target_type, name, zone, city, recipient_email):
       </td>
     </tr>
 
-    <!-- FOOTER ISTITUZIONALE & GDPR COMPLIANCE -->
+    <!-- FOOTER ISTITUZIONALE & GDPR COMPLIANCE AUTOMATICO -->
     <tr>
       <td align="center" style="padding: 20px 24px; background-color: #26282C; border-top: 1px solid #42454B; color: #7F8177; font-size: 11px; line-height: 1.5;">
         <p style="margin: 0 0 4px 0; font-weight: 600; color: #B5B7AB;">FotoRomaImmobiliare • di Antonio Picariello</p>
         <p style="margin: 0 0 4px 0;">Via Filippo Cremonesi 8, 00155 Roma • P.IVA 15883601002 • Consegna in 72h dal pagamento</p>
         <p style="margin: 0 0 12px 0;">Fotografia d'interni, Video 4K, Drone e Virtual Tour 360° per compravendite e alloggi turistici.</p>
         
+        <!-- SEZIONE ORIGINE CONTATTO E DISISCRIZIONE AUTOMATICA A 1 CLICK -->
         <div style="border-top: 1px solid #383A3F; padding-top: 10px; font-size: 10px; color: #6D6F66; text-align: center;">
           <p style="margin: 0 0 4px 0;">
             <em>Ricevi questa comunicazione informativa B2B in quanto la tua struttura o agenzia è presente su elenchi pubblici, portali di settore o registri di categoria.</em>
           </p>
           <p style="margin: 0;">
-            Se non desideri più ricevere aggiornamenti o proposte, <a href="{unsub_mail_link}" style="color: #87C054; text-decoration: underline;">clicca qui per disiscriverti</a> oppure rispondi con oggetto "CANCELLAMI".
+            Se non desideri più ricevere aggiornamenti o proposte, <a href="{auto_unsub_url}" target="_blank" style="color: #87C054; text-decoration: underline;">clicca qui per disiscriverti automaticamente con 1 click</a>.
           </p>
         </div>
       </td>
@@ -234,68 +235,3 @@ def build_html_template(target_type, name, zone, city, recipient_email):
 """
     return subject, html, category_code
 
-def run_daily_outreach_batch(batch_size=40):
-    print(f"[{datetime.now().isoformat()}] Avvio Batch Giornaliero Outreach ({batch_size} email max)...")
-    already_sent = load_already_contacted()
-    unsubscribed = load_unsubscribed()
-
-    all_prospects = []
-    for fpath in CONTACTS_FILES:
-        if os.path.exists(fpath):
-            with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    email = row.get("Email Contatto") or row.get("Email") or row.get("email")
-                    if email and "@" in email and "." in email:
-                        email = email.strip().lower()
-                        if email not in already_sent and email not in unsubscribed:
-                            all_prospects.append({
-                                "email": email,
-                                "name": row.get("Nome Struttura / Host") or row.get("Nome Struttura / Annuncio") or row.get("Nome") or "Gentile Partner",
-                                "type": row.get("Tipologia") or "AGENZIA",
-                                "city": row.get("Città / Area") or row.get("Città / Comune") or row.get("Città") or "Roma",
-                                "zone": row.get("Quartiere / Micro-Zona") or row.get("Quartiere / Zona") or "Centro"
-                            })
-
-    print(f"Totale prospect disponibili: {len(all_prospects)}")
-    if not all_prospects:
-        return 0
-
-    batch = all_prospects[:batch_size]
-    sent_count = 0
-
-    try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-
-        for p in batch:
-            subject, html, cat_code = build_html_template(p["type"], p["name"], p["zone"], p["city"], p["email"])
-            msg = MIMEMultipart("alternative")
-            msg["To"] = p["email"]
-            msg["Subject"] = subject
-            msg["From"] = f"{SENDER_DISPLAY} <{SENDER_EMAIL}>"
-            msg["Reply-To"] = SENDER_EMAIL
-            msg.attach(MIMEText(html, "html", "utf-8"))
-
-            server.sendmail(SMTP_USER, [p["email"]], msg.as_string())
-            sent_count += 1
-            print(f"[{sent_count}/{len(batch)}] Inviata email a: {p['email']} ({cat_code} - {p['city']})")
-
-            # Salva dettagli completi nel log: email, nome, citta, zona, categoria, timestamp, status
-            with open(LOG_FILE, "a", encoding="utf-8", newline="") as f_log:
-                writer = csv.writer(f_log)
-                writer.writerow([p["email"], p["name"], p["city"], p["zone"], cat_code, datetime.now().isoformat(), "INVIATO"])
-
-            if sent_count < len(batch):
-                sleep_sec = random.randint(25, 45)
-                time.sleep(sleep_sec)
-
-        server.quit()
-    except Exception as e:
-        print(f"Errore durante l'invio: {e}")
-
-    return sent_count
-
-if __name__ == "__main__":
-    run_daily_outreach_batch(batch_size=40)
