@@ -1,0 +1,30 @@
+name: Social Autopilot (Facebook, Instagram, Gruppi & LinkedIn)
+
+on:
+  schedule:
+    # Pubblicazione Martedì e Venerdì alle 08:00 UTC (10:00 Italiane)
+    - cron: '0 8 * * 2,5'
+  workflow_dispatch:
+
+jobs:
+  publish_socials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pubblica su Facebook, Instagram, Gruppi e LinkedIn
+        env:
+          META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID || '61583126505444' }}
+          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+        run: |
+          python scripts/social_syndication_engine.py
+          python scripts/market_trends_agent.py || true
