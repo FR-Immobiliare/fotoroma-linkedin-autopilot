@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """
-FotoRomaImmobiliare — B2B Personalized Outreach Engine (Brand Edition)
-Genera email HTML con Brand Identity ufficiale e copy segmentato su misura per:
-1. Agenzie Immobiliari di Compravendita
-2. Property Manager & Gestori Affitti Brevi (Airbnb / Booking)
-3. Architetti, Costruttori e Home Stager
+FotoRomaImmobiliare — B2B Direct Conversion Engine
+CTA diretta a WhatsApp / Contatto per massimizzare le conversioni immediate.
 """
 
 import os
@@ -25,62 +22,55 @@ SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 CONTACTS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "enriched_contacts.csv")
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "contacted_log.csv")
 
-def get_already_contacted():
-    if not os.path.exists(LOG_FILE):
-        return set()
-    with open(LOG_FILE, "r", encoding="utf-8") as f:
-        reader = csv.reader(f)
-        return set(row[0] for row in reader if row)
-
-def log_contact(email, agency_name, category, status):
-    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
-    with open(LOG_FILE, "a", encoding="utf-8", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow([email, agency_name, category, datetime.now().isoformat(), status])
-
 def build_html_template(target_type, name, zone, city):
     """
-    Costruisce il template HTML nei colori ufficiali del brand (#3A3C42, #F7F8E2, #87C054)
-    personalizzando testi, benefici e ganci in base alla categoria.
+    Template ad altissima conversione con CTA diretta verso WhatsApp / Chiamata.
     """
     
     if target_type == "PROPERTY_MANAGER":
-        tagline = "Ottimizzazione Annunci Airbnb & Booking"
-        subject = f"Presentazione annunci e foto per gli immobili a {city}"
-        hero_title = f"Come massimizzare il prezzo per notte dei vostri alloggi a {city}?"
-        intro_text = f"Negli affitti brevi gli ospiti decidono in 3 secondi sullo schermo dello smartphone: foto luminose e spazi valorizzati aumentano le prenotazioni dirette ed evitano recensioni negative o contestazioni al check-in."
-        benefits = [
-            ("✓", "Aumenta l'ADR (Prezzo medio/notte):", "Annunci curati trasmettono fiducia, pulizia e cura, riducendo la resistenza sul prezzo."),
-            ("✓", "File ottimizzati per OTA:", "Foto dimensionate e calibrate per l'algoritmo di Airbnb, Booking e Vrbo."),
-            ("✓", "Consegna ultra-rapida in 72h dal pagamento:", "Metti online l'alloggio velocemente senza perdere notti di incasso."),
-            ("✓", "Tariffe dedicate:", "Servizio Basic Airbnb da 80 € (20 foto editate) o Full senza limiti a 150 €.")
+        badge = "AIRBNB & PROPERTY MANAGEMENT"
+        subject = f"Presentazione annunci e valorizzazione per gli immobili a {city}"
+        headline = f"Come massimizzare il prezzo per notte a {city}?"
+        intro = f"Negli affitti brevi gli ospiti decidono in 3 secondi: immagini luminose e curate aumentano le prenotazioni dirette, proteggono il prezzo medio per notte ed evitano contestazioni al check-in."
+        points = [
+            ("Aumento del Prezzo Medio (ADR)", "La percezione di cura e pulizia riduce le resistenze sul prezzo anche in bassa stagione."),
+            ("Ottimizzazione Algoritmi OTA", "File con risoluzione e luce calibrate per risaltare su Airbnb, Booking e Vrbo."),
+            ("Consegna Rapida in 72 Ore", "Dal pagamento alla consegna dei file, per mettere online l'alloggio senza perdere notti d'incasso."),
+            ("Tariffe Trasparenti", "Pacchetto Basic Airbnb da 80 € (20 foto) o Full senza limiti a 150 €.")
         ]
-        cta_text = "VEDI IL PORTFOLIO AIRBNB ➔"
+        whatsapp_msg = "Ciao%20Antonio,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20per%20affitti%20brevi"
+        cta_main = "💬 SCRIVICI SU WHATSAPP"
+        cta_sub = "Risposta diretta in pochi minuti"
     else:
-        # AGENZIA IMMOBILIARE / BROKER
-        tagline = "Filtra i curiosi • Riduci i tempi di vendita"
-        subject = f"Qualificazione visite per i vostri annunci a {zone if zone else city}"
-        hero_title = f"Quanti sopralluoghi a vuoto fate ogni mese per annunci poco chiari?"
-        intro_text = f"Il problema più frequente riscontrato con i colleghi agenti a {city} è il tempo perso in visite con curiosi o persone che restano deluse dal vivo. Le foto professionali servono a <strong>filtrare a monte</strong> e portare in visita solo acquirenti pronti a fare una proposta."
-        benefits = [
-            ("✓", "Zero perditempo in visita:", "Chi vi contatta ha già compreso spazi e luce reale, azzerando le obiezioni durante il sopralluogo."),
-            ("✓", "Proteggi il valore dell'immobile:", "Immagini ad alto impatto evitano la svalutazione dell'annuncio e le continue trattative al ribasso."),
-            ("✓", "Servizio Full a 150 € (Foto illimitate):", "Copertura completa di ogni ambiente, terrazzo ed esterno senza costi nascosti."),
-            ("✓", "Virtual Tour 360° & Video 4K:", "Ideale per qualificare acquirenti esteri e fuori sede senza farli viaggiare per il primo appuntamento.")
+        badge = "QUALIFICAZIONE ANNUNCI & VISITE"
+        subject = f"Presentazione e qualificazione visite per i vostri annunci a {zone if zone else city}"
+        headline = f"Meno sopralluoghi a vuoto, contatti più qualificati."
+        intro = f"Il problema più frequente negli annunci a {city} è il tempo perso in visite con curiosi o acquirenti che restano delusi dal vivo. Una fotografia professionale serve a <strong>filtrare a monte</strong> e portare all'appuntamento solo chi è pronto a fare una proposta."
+        points = [
+            ("Zero 'Turisti Immobiliari'", "Chi contatta l'agenzia ha già compreso spazi e luce reale, eliminando le obiezioni durante la visita."),
+            ("Protezione del Valore di Vendita", "Una presentazione impeccabile evita che l'immobile rimanga fermo sui portali e subisca trattative al ribasso."),
+            ("Servizio Fotografico Full a 150 €", "Copertura completa dell'immobile con foto illimitate in alta definizione, senza costi nascosti."),
+            ("Virtual Tour 360° & Video 4K", "La soluzione ideale per qualificare acquirenti fuori sede ed esteri prima della visita.")
         ]
-        cta_text = "VEDI IL NOSTRO PORTFOLIO ➔"
+        whatsapp_msg = f"Ciao%20Antonio,%20vorrei%20fissare%20uno%20shooting%20o%20avere%20info%20per%20un%20immobile%20a%20{zone if zone else city}"
+        cta_main = "💬 RICHIEDI DISPONIBILITÀ SU WHATSAPP"
+        cta_sub = "Oppure chiama direttamente: +39 334 308 9759"
 
-    # Costruzione righe benefici HTML
-    benefits_html = ""
-    for icon, title, desc in benefits:
-        benefits_html += f"""
+    items_html = ""
+    for title, desc in points:
+        items_html += f"""
         <tr>
-          <td width="28" valign="top" style="color: #87C054; font-size: 18px; font-weight: 800; line-height: 1;">{icon}</td>
-          <td style="padding-left: 10px; color: #F7F8E2; font-size: 13px; line-height: 1.5;">
-            <strong style="color: #87C054;">{title}</strong> {desc}
+          <td style="padding-bottom: 15px;">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td width="18" valign="top" style="color: #88C253; font-size: 14px; line-height: 1.5; font-weight: bold;">•</td>
+                <td style="padding-left: 8px; color: #D8D9CF; font-size: 13px; line-height: 1.6;">
+                  <strong style="color: #F5F6E8; font-weight: 600;">{title}:</strong> {desc}
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
-        <tr><td height="14"></td></tr>
         """
 
     html = f"""<!DOCTYPE html>
@@ -90,65 +80,71 @@ def build_html_template(target_type, name, zone, city):
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FotoRomaImmobiliare</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #24262A; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F7F8E2;">
+<body style="margin: 0; padding: 20px 0; background-color: #222428; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F5F6E8; -webkit-font-smoothing: antialiased;">
   
-  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #3A3C42; border-radius: 18px; overflow: hidden; margin: 30px auto; border: 1px solid #4D5058; box-shadow: 0 14px 35px rgba(0,0,0,0.4);">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #2E3035; border-radius: 14px; overflow: hidden; margin: 0 auto; border: 1px solid #44474E; box-shadow: 0 12px 30px rgba(0,0,0,0.35);">
     
-    <!-- HEADER BRAND -->
+    <!-- HEADER -->
     <tr>
-      <td align="center" style="padding: 26px 20px; background-color: #2C2E33; border-bottom: 1px solid #4D5058;">
-        <img src="https://fotoromaimmobiliare.it/assets/logo-jjOiLsXH.png" alt="FotoRomaImmobiliare" style="max-height: 46px; width: auto; display: block; margin-bottom: 8px;" />
-        <p style="margin: 0; color: #B5B7AB; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">Studio Fotografico Immobiliare • Roma</p>
+      <td align="center" style="padding: 24px 20px 18px 20px; background-color: #26282C; border-bottom: 1px solid #3F4248;">
+        <img src="https://fotoromaimmobiliare.it/assets/logo-jjOiLsXH.png" alt="FotoRomaImmobiliare" style="max-height: 42px; width: auto; display: block; margin-bottom: 6px;" />
+        <p style="margin: 0; color: #9E9F97; font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 600;">Studio Fotografico Immobiliare • Roma</p>
       </td>
     </tr>
 
     <!-- HERO IMAGE -->
     <tr>
       <td style="padding: 0;">
-        <img src="https://fotoromaimmobiliare.it/assets/hero-interior-DPt5TKqx.jpg" alt="Interior Photography Roma" style="width: 100%; max-height: 250px; object-fit: cover; display: block;" />
+        <img src="https://fotoromaimmobiliare.it/assets/hero-interior-DPt5TKqx.jpg" alt="Interior Photography Roma" style="width: 100%; max-height: 230px; object-fit: cover; display: block;" />
       </td>
     </tr>
 
-    <!-- CORPO PRINCIPALE -->
+    <!-- CONTENUTO PRINCIPALE -->
     <tr>
-      <td style="padding: 30px 28px 20px 28px;">
+      <td style="padding: 28px 28px 24px 28px;">
         
-        <p style="margin: 0 0 12px 0; color: #87C054; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">
-          {tagline}
+        <!-- BADGE -->
+        <div style="display: inline-block; padding: 4px 10px; background-color: rgba(136, 194, 83, 0.12); border: 1px solid rgba(136, 194, 83, 0.3); border-radius: 6px; margin-bottom: 14px;">
+          <span style="color: #88C253; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">{badge}</span>
+        </div>
+
+        <h1 style="margin: 0 0 14px 0; color: #F5F6E8; font-size: 20px; font-weight: 700; line-height: 1.35; letter-spacing: -0.2px;">
+          {headline}
+        </h1>
+        
+        <p style="margin: 0 0 22px 0; color: #C2C3BA; font-size: 13.5px; line-height: 1.65;">
+          {intro}
         </p>
 
-        <h2 style="margin: 0 0 16px 0; color: #F7F8E2; font-size: 21px; font-weight: 800; line-height: 1.3;">
-          {hero_title}
-        </h2>
-        
-        <p style="margin: 0 0 22px 0; color: #B5B7AB; font-size: 14px; line-height: 1.6;">
-          {intro_text}
-        </p>
-
-        <!-- GRIGLIA VANTAGGI & BENEFICI -->
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #2C2E33; border-radius: 12px; border: 1px solid #4D5058; margin-bottom: 24px;">
+        <!-- CARD BENEFICI -->
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #26282C; border-radius: 10px; border: 1px solid #3F4248; margin-bottom: 24px;">
           <tr>
-            <td style="padding: 20px 18px;">
+            <td style="padding: 20px 18px 5px 18px;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                {benefits_html}
+                {items_html}
               </table>
             </td>
           </tr>
         </table>
 
-        <!-- CTA BRAND BUTTON -->
+        <!-- CTA DIRETTA A WHATSAPP / CONTATTO -->
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
-            <td align="center" style="padding-bottom: 12px;">
-              <a href="https://fotoromaimmobiliare.it/portfolio" target="_blank" style="display: inline-block; background-color: #87C054; color: #1E2024; font-weight: 800; font-size: 14px; text-decoration: none; padding: 14px 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(135, 192, 84, 0.35);">
-                {cta_text}
+            <td align="center" style="padding-bottom: 10px;">
+              <a href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: #88C253; color: #1C1E22; font-weight: 800; font-size: 14px; text-decoration: none; padding: 14px 32px; border-radius: 8px; box-shadow: 0 4px 15px rgba(136, 194, 83, 0.35); letter-spacing: 0.3px;">
+                {cta_main}
               </a>
             </td>
           </tr>
           <tr>
+            <td align="center" style="padding-bottom: 8px;">
+              <p style="margin: 0; color: #9E9F97; font-size: 12px;">{cta_sub}</p>
+            </td>
+          </tr>
+          <tr>
             <td align="center">
-              <a href="https://wa.me/393343089759?text=Ciao%20Antonio,%20ho%20ricevuto%20la%20mail%20per%20un%20servizio%20fotografico" target="_blank" style="color: #B5B7AB; font-size: 12px; text-decoration: underline;">
-                Oppure richiedi disponibilità su WhatsApp (+39 334 308 9759)
+              <a href="https://fotoromaimmobiliare.it" target="_blank" style="color: #B5B7AB; font-size: 11.5px; text-decoration: underline;">
+                Visita il sito web ufficiale: fotoromaimmobiliare.it
               </a>
             </td>
           </tr>
@@ -157,12 +153,12 @@ def build_html_template(target_type, name, zone, city):
       </td>
     </tr>
 
-    <!-- FOOTER COORDINATO -->
+    <!-- FOOTER -->
     <tr>
-      <td align="center" style="padding: 22px 24px; background-color: #2C2E33; border-top: 1px solid #4D5058; color: #8A8D82; font-size: 11px; line-height: 1.5;">
-        <p style="margin: 0 0 4px 0; font-weight: 700; color: #F7F8E2;">FotoRomaImmobiliare • di Antonio Picariello</p>
-        <p style="margin: 0 0 4px 0;">Via Filippo Cremonesi 8, 00155 Roma • Tel / WhatsApp: +39 334 308 9759</p>
-        <p style="margin: 0;">Servizi per Agenzie Immobiliari, Property Manager e Host Airbnb a Roma, Napoli e Firenze.</p>
+      <td align="center" style="padding: 18px 24px; background-color: #242529; border-top: 1px solid #3F4248; color: #7F8177; font-size: 11px; line-height: 1.5;">
+        <p style="margin: 0 0 3px 0; font-weight: 600; color: #B5B7AB;">FotoRomaImmobiliare • di Antonio Picariello</p>
+        <p style="margin: 0 0 3px 0;">Via Filippo Cremonesi 8, 00155 Roma • Consegna in 72h dal pagamento</p>
+        <p style="margin: 0;">Servizi fotografici professionali per il Real Estate a Roma, Napoli e Firenze.</p>
       </td>
     </tr>
 
@@ -173,5 +169,3 @@ def build_html_template(target_type, name, zone, city):
 """
     return subject, html
 
-if __name__ == "__main__":
-    print("B2B Outreach Engine pronto con segmentazione dinamica per Agenzie e Property Manager.")
