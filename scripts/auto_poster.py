@@ -14,10 +14,24 @@ import urllib.request
 import urllib.parse
 from datetime import datetime
 
+# Carica automaticamente .env se presente (senza dipendenze esterne)
+env_file = os.path.join(os.path.dirname(__file__), "..", ".env")
+if os.path.exists(env_file):
+    try:
+        with open(env_file, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+    except Exception:
+        pass
+
 # Environment Secrets
 LINKEDIN_ACCESS_TOKEN = os.getenv("LINKEDIN_ACCESS_TOKEN")
 LINKEDIN_AUTHOR_URN = os.getenv("LINKEDIN_AUTHOR_URN")  # es. "urn:li:person:XXXX" o "urn:li:organization:XXXX"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 
 QUEUE_DIR = os.path.join(os.path.dirname(__file__), "..", "queue_photos")
 PUBLISHED_DIR = os.path.join(os.path.dirname(__file__), "..", "published")
