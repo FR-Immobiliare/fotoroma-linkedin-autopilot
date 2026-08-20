@@ -233,3 +233,91 @@ def build_html_template(target_type, name, zone, city, recipient_email):
 """
     return subject, html, category_code
 
+def send_outreach_batch(max_emails=35):
+    unsubscribed = load_unsubscribed()
+    already_contacted = load_already_contacted()
+    
+    candidates = []
+    for csv_file in CONTACTS_FILES:
+        if not os.path.exists(csv_file):
+            continue
+        with open(csv_file, "r", encoding="utf-8", errors="ignore") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                email = (row.get("email") or row.get("Email") or "").strip().lower()
+                if not email or "@" not in email:
+                    continue
+                if email in unsubscribed or email in already_contacted:
+                    continue
+                name = row.get("nome") or row.get("Nome") or row.get("name") or "Gentile Host / Agenzia"
+                zone = row.get("zona") or row.get("Zona") or row.get("zone") or ""
+                city = row.get("citta") or row.get("Citta") or row.get("city") or "Roma"
+                target_type = row.get("categoria") or row.get("Categoria") or row.get("type") or "AIRBNB"
+                candidates.append({
+                    "email": email,
+                    "name": name,
+                    "zone": zone,
+                    "city": city,
+                    "target_type": target_type
+                })
+    
+    if not candidates:
+        print("ℹ️ Nessun nuovo contatto da inviare (tutti già contattati o disiscritti).")
+        return 0
+
+    batch = candidates[:max_emails]
+    print(f"🚀 Avvio invio batch di {len(batch)} email (su un totale di {len(candidates)} lead in coda)...")
+    
+    sent_count = 0
+    try:
+        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20)
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+        
+        for item in batch:
+            email = item["email"]
+            name = item["name"]
+            zone = item["zone"]
+            city = item["city"]
+            target_type = item["target_type"]
+            
+            subject, html_content, category_code = build_html_template(target_type, name, zone, city, email)
+            
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = subject
+            msg["From"] = f"{SENDER_DISPLAY} <{SMTP_USER}>"
+            msg["To"] = email
+            msg["Reply-To"] = SENDER_EMAIL
+            msg.attach(MIMEText(html_content, "html", "utf-8"))
+            
+            try:
+                server.sendmail(SMTP_USER, [email], msg.as_string())
+                sent_count += 1
+                print(f"  ✅ Inviata [{sent_count}/{len(batch)}]: {email} ({city} - {category_code})")
+                
+                # Registra nel log
+                with open(LOG_FILE, "a", encoding="utf-8", newline="") as lf:
+                    writer = csv.writer(lf)
+                    writer.writerow([email, datetime.now().isoformat(), category_code, city, zone])
+                
+                # Pausa casuale anti-spam
+                time.sleep(random.uniform(2.5, 5.5))
+            except Exception as e:
+                print(f"  ❌ Errore invio a {email}: {e}")
+                
+        server.quit()
+    except Exception as e:
+        print(f"❌ Errore connessione SMTP: {e}")
+        
+    print(f"\n✨ Batch completato: {sent_count} email inviate con successo.")
+    return sent_count
+
+if __name__ == "__main__":
+    limit = 35
+    if len(sys.argv) > 1:
+        try:
+            limit = int(sys.argv[1])
+        except ValueError:
+            pass
+    send_outreach_batch(max_emails=limit)
+
