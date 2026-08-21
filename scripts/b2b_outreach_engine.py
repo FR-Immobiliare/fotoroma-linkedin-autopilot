@@ -88,13 +88,13 @@ def build_html_template(target_type, name, zone, city, recipient_email):
 
     items_html = ""
     for i, (title, desc) in enumerate(points):
-        mb = "10px" if i < len(points) - 1 else "0"
+        mb = "12px" if i < len(points) - 1 else "0"
         items_html += f"""
-        <div style="background-color: #35373D; border: 1px solid #4D5059; border-radius: 12px; padding: 12px 14px; margin-bottom: {mb}; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-          <p style="margin: 0 0 4px 0; color: #88C253; font-size: 11px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.35; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
+        <div style="background-color: #35373D; border: 1px solid #4D5059; border-radius: 14px; padding: 14px 16px; margin-bottom: {mb}; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <p style="margin: 0 0 5px 0; color: #88C253; font-size: 13px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.35; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
             {title}
           </p>
-          <p style="margin: 0; color: #B5B7AB; font-size: 10.5px; line-height: 1.55; text-align: center; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
+          <p style="margin: 0; color: #B5B7AB; font-size: 12.5px; line-height: 1.6; text-align: center; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
             {desc}
           </p>
         </div>
@@ -118,82 +118,82 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     }}
     @media only screen and (max-width: 520px) {{
       .wrapper-table {{ width: 100% !important; border-radius: 0 !important; }}
-      .content-cell {{ padding: 22px 16px !important; }}
-      .headline-text {{ font-size: 15px !important; }}
-      .subheadline-text {{ font-size: 11px !important; }}
-      .intro-text {{ font-size: 10px !important; }}
-      .cta-btn {{ display: block !important; width: 100% !important; box-sizing: border-box !important; padding: 13px 12px !important; font-size: 11.5px !important; }}
+      .content-cell {{ padding: 24px 18px !important; }}
+      .headline-text {{ font-size: 17px !important; }}
+      .subheadline-text {{ font-size: 13px !important; }}
+      .intro-text {{ font-size: 12px !important; }}
+      .cta-btn {{ display: block !important; width: 100% !important; box-sizing: border-box !important; padding: 14px 14px !important; font-size: 13.5px !important; }}
     }}
   </style>
 </head>
 <body style="margin: 0; padding: 18px 0; background-color: #3A3C42; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #F7F8E2; -webkit-font-smoothing: antialiased;">
   
-  <table class="wrapper-table" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 560px; background-color: #43464D; border-radius: 18px; overflow: hidden; margin: 0 auto; border: 1px solid #585C66; box-shadow: 0 16px 36px rgba(0,0,0,0.5);">
+  <table class="wrapper-table" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 570px; background-color: #43464D; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #585C66; box-shadow: 0 16px 36px rgba(0,0,0,0.5);">
     
     <!-- HEADER BRAND -->
     <tr>
-      <td align="center" style="padding: 18px 18px 14px 18px; background-color: #2F3136; border-bottom: 1px solid #4D5059; text-align: center;">
-        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 72px; max-height: 72px; width: auto; display: block; margin: 0 auto 5px auto;" />
-        <p style="margin: 0; color: #F7F8E2; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; text-align: center;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
+      <td align="center" style="padding: 20px 18px 15px 18px; background-color: #2F3136; border-bottom: 1px solid #4D5059; text-align: center;">
+        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 76px; max-height: 76px; width: auto; display: block; margin: 0 auto 5px auto;" />
+        <p style="margin: 0; color: #F7F8E2; font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; text-align: center;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
 
     <!-- HERO IMAGE -->
     <tr>
       <td style="padding: 0;">
-        <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 220px; object-fit: cover; display: block;" />
+        <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 225px; object-fit: cover; display: block;" />
       </td>
     </tr>
 
     <!-- CONTENUTO PRINCIPALE (100% CENTRATO) -->
     <tr>
-      <td class="content-cell" align="center" style="padding: 28px 26px 24px 26px; text-align: center;">
+      <td class="content-cell" align="center" style="padding: 30px 28px 26px 28px; text-align: center;">
         
         <!-- HEADLINE (CENTRATA) -->
-        <h1 class="headline-text" style="margin: 0 0 8px 0; color: #88C253; font-size: 17px; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">
+        <h1 class="headline-text" style="margin: 0 0 10px 0; color: #88C253; font-size: 19px; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">
           {headline}
         </h1>
 
         <!-- SUBHEADLINE (CENTRATA) -->
-        <p class="subheadline-text" style="margin: 0 0 16px 0; color: #F7F8E2; font-size: 12px; font-weight: 700; line-height: 1.45; text-align: center;">
+        <p class="subheadline-text" style="margin: 0 0 18px 0; color: #F7F8E2; font-size: 14px; font-weight: 700; line-height: 1.45; text-align: center;">
           {subheadline}
         </p>
 
         <!-- BREVISSIMA PRESENTAZIONE (CENTRATA) -->
-        <p style="margin: 0 0 18px 0; color: #D4D6C8; font-size: 10.5px; line-height: 1.6; text-align: center;">
+        <p style="margin: 0 0 20px 0; color: #D4D6C8; font-size: 12.5px; line-height: 1.65; text-align: center;">
           {presentazione}
         </p>
         
         <!-- SLOGAN & INTRODUZIONE COMMERCIALE (CENTRATA) -->
-        <p class="slogan-text" style="margin: 0 0 8px 0; color: #F7F8E2; font-size: 12.5px; font-weight: 700; line-height: 1.4; text-align: center; letter-spacing: -0.01em;">
+        <p class="slogan-text" style="margin: 0 0 10px 0; color: #F7F8E2; font-size: 14.5px; font-weight: 700; line-height: 1.4; text-align: center; letter-spacing: -0.01em;">
           {intro_slogan}
         </p>
-        <p class="intro-text" style="margin: 0 0 24px 0; color: #B5B7AB; font-size: 10.5px; line-height: 1.65; text-align: center;">
+        <p class="intro-text" style="margin: 0 0 26px 0; color: #B5B7AB; font-size: 12.5px; line-height: 1.7; text-align: center;">
           {intro_body}
         </p>
 
         <!-- SCHEDE SERVIZI -->
-        <div style="margin-bottom: 24px; text-align: center;">
+        <div style="margin-bottom: 28px; text-align: center;">
           {items_html}
         </div>
 
-        <!-- CTA WHATSAPP (PILL STYLE) -->
+        <!-- CTA WHATSAPP (PILL OUTLINE STYLE - TESTO CHIARO & BORDO VERDE) -->
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
-            <td align="center" style="padding-bottom: 12px; text-align: center;">
-              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: #88C253; color: #202226; font-weight: 700; font-size: 12px; text-decoration: none; padding: 13px 30px; border-radius: 9999px; box-shadow: 0 6px 20px rgba(136, 194, 83, 0.35); text-align: center; letter-spacing: 0.2px;">
-                Richiedi disponibilità su WhatsApp ➔
+            <td align="center" style="padding-bottom: 14px; text-align: center;">
+              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: rgba(53, 55, 61, 0.4); border: 1.5px solid #88C253; color: #F7F8E2; font-weight: 600; font-size: 14px; text-decoration: none; padding: 14px 34px; border-radius: 9999px; box-shadow: 0 0 20px rgba(136, 194, 83, 0.18); text-align: center; letter-spacing: 0.2px;">
+                <span style="color: #88C253; font-size: 16px; vertical-align: middle; margin-right: 6px;">💬</span> Richiedi disponibilità su WhatsApp ➔
               </a>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-bottom: 6px; text-align: center;">
-              <p style="margin: 0; color: #B5B7AB; font-size: 10.5px; text-align: center;">Oppure chiama: <strong style="color: #F7F8E2;">+39 334 308 9759</strong></p>
+            <td align="center" style="padding-bottom: 8px; text-align: center;">
+              <p style="margin: 0; color: #B5B7AB; font-size: 12px; text-align: center;">Oppure chiama: <strong style="color: #F7F8E2;">+39 334 308 9759</strong></p>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-bottom: 20px; text-align: center;">
-              <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 9.5px; text-decoration: underline; text-align: center;">
+            <td align="center" style="padding-bottom: 22px; text-align: center;">
+              <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11px; text-decoration: underline; text-align: center;">
                 Consulta il listino prezzi ufficiale su fotoromaimmobiliare.it
               </a>
             </td>
@@ -201,8 +201,8 @@ def build_html_template(target_type, name, zone, city, recipient_email):
         </table>
 
         <!-- CHIUSURA -->
-        <div style="border-top: 1px solid #585C66; padding-top: 14px; margin-top: 4px; text-align: center;">
-          <p style="margin: 0; text-align: center; color: #F7F8E2; font-size: 11.5px; font-weight: 600; line-height: 1.45;">
+        <div style="border-top: 1px solid #585C66; padding-top: 16px; margin-top: 6px; text-align: center;">
+          <p style="margin: 0; text-align: center; color: #F7F8E2; font-size: 13.5px; font-weight: 600; line-height: 1.45;">
             Presenta meglio il tuo immobile. Parti dalle immagini.
           </p>
         </div>
@@ -212,12 +212,12 @@ def build_html_template(target_type, name, zone, city, recipient_email):
 
     <!-- FOOTER ISTITUZIONALE -->
     <tr>
-      <td align="center" style="padding: 18px 20px; background-color: #2F3136; border-top: 1px solid #4D5059; color: #93968A; font-size: 9.5px; line-height: 1.5;">
-        <p style="margin: 0 0 3px 0; font-weight: 600; color: #F7F8E2;">FotoRomaImmobiliare • di Antonio Picariello</p>
-        <p style="margin: 0 0 3px 0;">Via Filippo Cremonesi 8, 00155 Roma • P.IVA 15883601002 • Consegna in 72h dal pagamento</p>
-        <p style="margin: 0 0 10px 0;">Fotografia d'interni, Video 4K, Drone e Virtual Tour 360° per compravendite e alloggi turistici.</p>
+      <td align="center" style="padding: 20px 22px; background-color: #2F3136; border-top: 1px solid #4D5059; color: #93968A; font-size: 10.5px; line-height: 1.55;">
+        <p style="margin: 0 0 4px 0; font-weight: 600; color: #F7F8E2;">FotoRomaImmobiliare • di Antonio Picariello</p>
+        <p style="margin: 0 0 4px 0;">Via Filippo Cremonesi 8, 00155 Roma • P.IVA 15883601002 • Consegna in 72h dal pagamento</p>
+        <p style="margin: 0 0 12px 0;">Fotografia d'interni, Video 4K, Drone e Virtual Tour 360° per compravendite e alloggi turistici.</p>
         
-        <div style="border-top: 1px solid #43464D; padding-top: 8px; font-size: 9px; color: #7E8176; text-align: center;">
+        <div style="border-top: 1px solid #43464D; padding-top: 9px; font-size: 9.5px; color: #7E8176; text-align: center;">
           <p style="margin: 0 0 3px 0;">
             <em>Ricevi questa comunicazione informativa B2B in quanto la tua struttura o agenzia è presente su elenchi pubblici, portali di settore o registri di categoria.</em>
           </p>
