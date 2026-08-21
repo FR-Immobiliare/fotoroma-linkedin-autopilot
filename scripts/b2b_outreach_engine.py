@@ -270,10 +270,18 @@ def send_outreach_batch(max_emails=35):
     print(f"🚀 Avvio invio batch di {len(batch)} email (su un totale di {len(candidates)} lead in coda)...")
     
     sent_count = 0
+    server = None
     try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
+        try:
+            server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20)
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASS)
+        except Exception as e587:
+            print(f"⚠️ Tentativo su porta {SMTP_PORT} non riuscito ({e587}), fallback su SSL porta 465...")
+            import ssl
+            context = ssl.create_default_context()
+            server = smtplib.SMTP_SSL(SMTP_HOST, 465, context=context, timeout=20)
+            server.login(SMTP_USER, SMTP_PASS)
         
         for item in batch:
             email = item["email"]
