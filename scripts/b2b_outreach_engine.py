@@ -70,32 +70,19 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     is_pm = "AIRBNB" in target_type.upper() or "HOST" in target_type.upper() or "PROPERTY" in target_type.upper()
     category_code = "AIRBNB_HOST_PM" if is_pm else "AGENZIE_IMMOBILIARI"
     
-    if is_pm:
-        badge = "AIRBNB · B&B · PROPERTY MANAGEMENT"
-        hero_img = random.choice(PM_IMAGES)
-        subject = f"Presentazione annunci e valorizzazione per gli alloggi a {city}"
-        hook_question = f"Lo sapevate che l'80% degli ospiti su Airbnb decide se aprire un annuncio nei primi 3 secondi solo per via della prima foto?"
-        intro = f"Negli affitti brevi le foto non servono solo a mostrare la casa: servono ad <strong>alzare il prezzo medio per notte</strong>, aumentare le prenotazioni dirette ed evitare contestazioni al check-in."
-        points = [
-            ("Fotografia d'Interni per Airbnb (80 € / 150 €)", "Scatti luminosi ad alta definizione studiati per valorizzare gli spazi e i dettagli di accoglienza."),
-            ("Virtual Tour 360° Matterport (290 €)", "Visita virtuale interattiva per permettere agli ospiti di esplorare l'alloggio prima di prenotare."),
-            ("Video Reportage 4K & Drone", "Walkthrough completi e riprese aeree per alloggi di pregio e promozioni social."),
-            ("Consegna Rapida in 72h dal pagamento", "Tutti i file consegnati già calibrati per Airbnb, Booking e Vrbo, pronti per essere caricati subito.")
-        ]
-        whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{city}"
-    else:
-        badge = "STUDIO FOTOGRAFICO IMMOBILIARE"
-        hero_img = random.choice(AGENCY_IMAGES)
-        subject = f"Qualificazione visite e annunci per le agenzie di {zone if zone else city}"
-        hook_question = f"Quante visite a vuoto fate ogni mese con persone che poi dicono: 'Ah, ma dalle foto sembrava un'altra cosa'?"
-        intro = f"Il vero costo delle foto amatoriali o ingannevoli è il vostro tempo. Una fotografia professionale serve a <strong>filtrare i curiosi a monte</strong> e portare all'appuntamento solo acquirenti pronti a fare una proposta seria."
-        points = [
-            ("Servizio Fotografico Full a 150 €", "Foto professionali d'interni ed esterni <strong>illimitate</strong> in alta definizione, per coprire ogni singolo ambiente."),
-            ("Virtual Tour 360° Matterport (290 €)", "Scansione 3D interattiva per qualificare acquirenti fuori sede ed esteri prima di fissare il sopralluogo."),
-            ("Video Reportage 4K & Riprese Drone (150 €)", "Video emozionali e riprese aeree per dare massimo risalto agli annunci di fascia alta."),
-            ("Consegna in 72h dal pagamento", "Tutti i file consegnati già calibrati per i principali portali immobiliari e sito di agenzia.")
-        ]
-        whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico%20a%20{zone if zone else city}"
+    hero_img = random.choice(PM_IMAGES) if is_pm else random.choice(AGENCY_IMAGES)
+    subject = f"Foto migliori. Clienti migliori. | FotoRomaImmobiliare"
+    badge = "FOTO MIGLIORI. CLIENTI MIGLIORI."
+    subheadline = "La tua prenotazione inizia da come ti presenti online."
+    intro = "Prima di prenotare, il tuo ospite guarda il tuo annuncio.<br><br>Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
+    
+    points = [
+        ("FOTOGRAFIA D'INTERNI PER AIRBNB — 80 € / 150 €", "Scatti professionali pensati per presentare al meglio gli ambienti sulle piattaforme di prenotazione."),
+        ("VIRTUAL TOUR 360° MATTERPORT — 290 €", "Un'esperienza immersiva per permettere al potenziale ospite di esplorare gli ambienti prima di prenotare."),
+        ("VIDEO REPORTAGE 4K & DRONE", "Walkthrough e riprese aeree per strutture di pregio e contenuti promozionali."),
+        ("CONSEGNA RAPIDA IN 72H DAL PAGAMENTO", "File pronti per Airbnb, Booking, Vrbo e per i tuoi canali online.")
+    ]
+    whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico"
 
     items_html = ""
     for title, desc in points:
@@ -118,9 +105,9 @@ def build_html_template(target_type, name, zone, city, recipient_email):
         </tr>
         """
 
-    auto_unsub_url = f"https://fotoromaimmobiliare.it/disiscrizione?email={urllib.parse.quote(recipient_email)}"
-    prezzi_url = "https://fotoromaimmobiliare.it/prezzi-fotografo-immobiliare-roma"
-    tracking_pixel_url = f"https://fotoromaimmobiliare.it/assets/logo.png?trk={urllib.parse.quote(recipient_email)}&cat={category_code}&t={int(time.time())}"
+    auto_unsub_url = f"https://www.fotoromaimmobiliare.it/disiscrizione?email={urllib.parse.quote(recipient_email)}"
+    prezzi_url = "https://www.fotoromaimmobiliare.it/prezzi-fotografo-immobiliare-roma"
+    tracking_pixel_url = f"https://www.fotoromaimmobiliare.it/assets/logo.png?trk={urllib.parse.quote(recipient_email)}&cat={category_code}&t={int(time.time())}"
 
     html = f"""<!DOCTYPE html>
 <html>
@@ -153,17 +140,17 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     <tr>
       <td style="padding: 28px 26px 24px 26px;">
         
-        <!-- BADGE -->
-        <p style="margin: 0 0 10px 0; color: #87C054; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;">
+        <!-- HEADLINE -->
+        <h1 style="margin: 0 0 8px 0; color: #87C054; font-size: 20px; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px;">
           {badge}
-        </p>
-
-        <!-- GANCIO FORTE / TITOLO -->
-        <h1 style="margin: 0 0 14px 0; color: #F7F8E2; font-size: 20px; font-weight: 800; line-height: 1.35;">
-          {hook_question}
         </h1>
+
+        <!-- SUBHEADLINE -->
+        <p style="margin: 0 0 16px 0; color: #F7F8E2; font-size: 15px; font-weight: 700; line-height: 1.4;">
+          {subheadline}
+        </p>
         
-        <!-- INTRO -->
+        <!-- TESTO INTRODUTTIVO -->
         <p style="margin: 0 0 22px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.6;">
           {intro}
         </p>
@@ -194,13 +181,18 @@ def build_html_template(target_type, name, zone, city, recipient_email):
             </td>
           </tr>
           <tr>
-            <td align="center">
+            <td align="center" style="padding-bottom: 18px;">
               <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11px; text-decoration: underline;">
                 Consulta il listino prezzi ufficiale su fotoromaimmobiliare.it
               </a>
             </td>
           </tr>
         </table>
+
+        <!-- CHIUSURA -->
+        <p style="margin: 6px 0 0 0; text-align: center; color: #F7F8E2; font-size: 13px; font-weight: 600; line-height: 1.4;">
+          Presenta meglio il tuo immobile. Parti dalle immagini.
+        </p>
 
       </td>
     </tr>
