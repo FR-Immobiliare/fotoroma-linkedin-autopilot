@@ -38,8 +38,14 @@ def check_domain_has_mx(email_address):
     """
     Verifica se il dominio dell'email esiste e può ricevere posta (DNS MX check).
     """
+    if not email_address or "@" not in email_address:
+        return False
+    domain = None
     try:
-        domain = email_address.split("@")[1].strip().lower()
+        parts = email_address.strip().split("@")
+        if len(parts) != 2 or not parts[1].strip():
+            return False
+        domain = parts[1].strip().lower()
         if domain in DOMAIN_MX_CACHE:
             return DOMAIN_MX_CACHE[domain]
         
@@ -48,7 +54,8 @@ def check_domain_has_mx(email_address):
         DOMAIN_MX_CACHE[domain] = True
         return True
     except Exception:
-        DOMAIN_MX_CACHE[domain] = False
+        if domain:
+            DOMAIN_MX_CACHE[domain] = False
         return False
 
 def check_imap_for_bounces():
