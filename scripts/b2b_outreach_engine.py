@@ -75,7 +75,8 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
     subheadline = "La tua prossima prenotazione dipende da come ti presenti online."
     presentazione = "Sono Antonio, fotografo e titolare di FotoRomaImmobiliare.it.<br>Realizzo fotografie professionali, Virtual Tour e video per strutture ricettive e immobili destinati agli affitti brevi."
-    intro = "Prima di prenotare, il tuo ospite guarda il tuo annuncio.<br><br>Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
+    intro_slogan = "Prima di prenotare, il tuo ospite guarda il tuo annuncio."
+    intro_body = "Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
     
     points = [
         ("FOTOGRAFIA D'INTERNI PER AIRBNB — 80 € / 150 €", "Scatti professionali pensati per presentare al meglio gli ambienti sulle piattaforme di prenotazione."),
@@ -159,13 +160,16 @@ def build_html_template(target_type, name, zone, city, recipient_email):
         </p>
 
         <!-- BREVISSIMA PRESENTAZIONE (CENTRATA) -->
-        <p style="margin: 0 0 20px 0; color: #D4D6C8; font-size: 13.5px; line-height: 1.65; text-align: center;">
+        <p style="margin: 0 0 22px 0; color: #D4D6C8; font-size: 13.5px; line-height: 1.65; text-align: center;">
           {presentazione}
         </p>
         
-        <!-- INTRODUZIONE COMMERCIALE (CENTRATA) -->
-        <p class="intro-text" style="margin: 0 0 26px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.7; text-align: center;">
-          {intro}
+        <!-- SLOGAN & INTRODUZIONE COMMERCIALE (CENTRATA) -->
+        <p class="slogan-text" style="margin: 0 0 10px 0; color: #F7F8E2; font-size: 16px; font-weight: 700; line-height: 1.4; text-align: center; letter-spacing: -0.01em;">
+          {intro_slogan}
+        </p>
+        <p class="intro-text" style="margin: 0 0 28px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.7; text-align: center;">
+          {intro_body}
         </p>
 
         <!-- SCHEDE SERVIZI (CARD STYLE SITO) -->
