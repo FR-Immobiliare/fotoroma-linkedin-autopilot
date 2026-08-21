@@ -4,8 +4,8 @@ on:
   schedule:
     # 1. Outreach del Mattino: Tutti i feriali (Lunedì - Venerdì) alle 07:30 UTC (09:30 Italiane)
     - cron: '30 7 * * 1-5'
-    # 2. Outreach della Sera: Tutti i giorni alle 18:00 UTC (20:00 Italiane)
-    - cron: '0 18 * * *'
+    # 2. Outreach della Sera: Tutti i giorni alle 16:00 UTC (18:00 Italiane)
+    - cron: '0 16 * * *'
     # 3. Report Notturno di Mezzanotte ad Antonio: Ogni sera alle 22:00 UTC (00:00 Italiane)
     - cron: '0 22 * * *'
     # 4. Report Settimanale Omnicanale: Mercoledì alle 15:00 UTC (17:00 Italiane)
@@ -25,7 +25,7 @@ on:
 
 jobs:
   outreach_job:
-    if: github.event.schedule == '30 7 * * 1-5' || github.event.schedule == '0 18 * * *' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
+    if: github.event.schedule == '30 7 * * 1-5' || github.event.schedule == '0 16 * * *' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
     runs-on: ubuntu-latest
     permissions:
       contents: write
