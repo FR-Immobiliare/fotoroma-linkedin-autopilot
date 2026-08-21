@@ -74,7 +74,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     subject = f"Foto migliori. Clienti migliori. | FotoRomaImmobiliare"
     headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
     subheadline = "La tua prenotazione inizia da come ti presenti online."
-    presentazione = "Sono Antonio Picariello, fotografo e titolare di FotoRomaImmobiliare.<br>Realizzo fotografie professionali, Virtual Tour e video per strutture ricettive e immobili destinati agli affitti brevi."
+    presentazione = "Sono Antonio, fotografo e titolare di FotoRomaImmobiliare.<br>Realizzo fotografie professionali, Virtual Tour e video per strutture ricettive e immobili destinati agli affitti brevi."
     intro = "Prima di prenotare, il tuo ospite guarda il tuo annuncio.<br><br>Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
     
     points = [
