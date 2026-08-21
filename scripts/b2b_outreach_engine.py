@@ -89,11 +89,11 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     for i, (title, desc) in enumerate(points):
         mb = "12px" if i < len(points) - 1 else "0"
         items_html += f"""
-        <div style="background-color: #282A2E; border: 1px solid #3E4147; border-radius: 12px; padding: 15px 14px; margin-bottom: {mb}; text-align: center;">
-          <p style="margin: 0 0 6px 0; color: #87C054; font-size: 13px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.35;">
+        <div style="background-color: #35373D; border: 1px solid #4D5059; border-radius: 14px; padding: 16px 16px; margin-bottom: {mb}; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <p style="margin: 0 0 6px 0; color: #88C253; font-size: 13px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.35; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
             {title}
           </p>
-          <p style="margin: 0; color: #B5B7AB; font-size: 12.5px; line-height: 1.55; text-align: center;">
+          <p style="margin: 0; color: #B5B7AB; font-size: 13px; line-height: 1.6; text-align: center; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
             {desc}
           </p>
         </div>
@@ -111,80 +111,84 @@ def build_html_template(target_type, name, zone, city, recipient_email):
   <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
   <title>FotoRomaImmobiliare</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    body, table, td, p, a, h1, span {{
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }}
     @media only screen and (max-width: 520px) {{
       .wrapper-table {{ width: 100% !important; border-radius: 0 !important; }}
-      .content-cell {{ padding: 24px 16px !important; }}
-      .headline-text {{ font-size: 18px !important; }}
-      .subheadline-text {{ font-size: 14px !important; }}
+      .content-cell {{ padding: 24px 18px !important; }}
+      .headline-text {{ font-size: 19px !important; }}
+      .subheadline-text {{ font-size: 14.5px !important; }}
       .intro-text {{ font-size: 13px !important; }}
-      .cta-btn {{ display: block !important; width: 100% !important; box-sizing: border-box !important; padding: 14px 12px !important; font-size: 13.5px !important; }}
+      .cta-btn {{ display: block !important; width: 100% !important; box-sizing: border-box !important; padding: 15px 14px !important; font-size: 14px !important; }}
     }}
   </style>
 </head>
-<body style="margin: 0; padding: 16px 0; background-color: #1E2024; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F7F8E2; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 20px 0; background-color: #3A3C42; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #F7F8E2; -webkit-font-smoothing: antialiased;">
   
-  <table class="wrapper-table" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 18px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
+  <table class="wrapper-table" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #43464D; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #585C66; box-shadow: 0 16px 36px rgba(0,0,0,0.5);">
     
-    <!-- HEADER BRAND -->
+    <!-- HEADER BRAND (NAV STYLE FOTOROMA) -->
     <tr>
-      <td align="center" style="padding: 22px 20px 16px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B; text-align: center;">
-        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 76px; max-height: 76px; width: auto; display: block; margin: 0 auto 6px auto;" />
+      <td align="center" style="padding: 22px 20px 16px 20px; background-color: #2F3136; border-bottom: 1px solid #4D5059; text-align: center;">
+        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 78px; max-height: 78px; width: auto; display: block; margin: 0 auto 6px auto;" />
         <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; text-align: center;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
 
-    <!-- HERO IMAGE ROTANTE -->
+    <!-- HERO IMAGE -->
     <tr>
       <td style="padding: 0;">
-        <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 220px; object-fit: cover; display: block;" />
+        <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 230px; object-fit: cover; display: block;" />
       </td>
     </tr>
 
-    <!-- CONTENUTO PRINCIPALE (100% CENTRATO CON SPAZIATURE ARMONIOSE) -->
+    <!-- CONTENUTO PRINCIPALE (100% CENTRATO SITO STYLE) -->
     <tr>
-      <td class="content-cell" align="center" style="padding: 30px 28px 26px 28px; text-align: center;">
+      <td class="content-cell" align="center" style="padding: 32px 30px 28px 30px; text-align: center;">
         
-        <!-- HEADLINE (CENTRATA) -->
-        <h1 class="headline-text" style="margin: 0 0 10px 0; color: #87C054; font-size: 20px; font-weight: 800; line-height: 1.35; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">
+        <!-- HEADLINE (CENTRATA - VERDE SITO) -->
+        <h1 class="headline-text" style="margin: 0 0 10px 0; color: #88C253; font-size: 21px; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">
           {headline}
         </h1>
 
-        <!-- SUBHEADLINE (CENTRATA) -->
-        <p class="subheadline-text" style="margin: 0 0 20px 0; color: #F7F8E2; font-size: 15px; font-weight: 700; line-height: 1.45; text-align: center;">
+        <!-- SUBHEADLINE (CENTRATA - CREMA LUXURY SITO) -->
+        <p class="subheadline-text" style="margin: 0 0 20px 0; color: #F7F8E2; font-size: 15.5px; font-weight: 700; line-height: 1.45; text-align: center;">
           {subheadline}
         </p>
 
         <!-- BREVISSIMA PRESENTAZIONE (CENTRATA) -->
-        <p style="margin: 0 0 20px 0; color: #D4D6C8; font-size: 13.5px; line-height: 1.6; text-align: center;">
+        <p style="margin: 0 0 20px 0; color: #D4D6C8; font-size: 13.5px; line-height: 1.65; text-align: center;">
           {presentazione}
         </p>
         
         <!-- INTRODUZIONE COMMERCIALE (CENTRATA) -->
-        <p class="intro-text" style="margin: 0 0 26px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.65; text-align: center;">
+        <p class="intro-text" style="margin: 0 0 26px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.7; text-align: center;">
           {intro}
         </p>
 
-        <!-- SCHEDE SERVIZI SPAZIATE & LEGGIBILI SU MOBILE -->
-        <div style="margin-bottom: 28px; text-align: center;">
+        <!-- SCHEDE SERVIZI (CARD STYLE SITO) -->
+        <div style="margin-bottom: 30px; text-align: center;">
           {items_html}
         </div>
 
-        <!-- CTA WHATSAPP (CENTRATA & VISIBILE) -->
+        <!-- CTA WHATSAPP (PILL STYLE FOTOROMA) -->
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td align="center" style="padding-bottom: 14px; text-align: center;">
-              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: #87C054; color: #1E2024; font-weight: 700; font-size: 14px; text-decoration: none; padding: 14px 34px; border-radius: 9px; box-shadow: 0 4px 14px rgba(135, 192, 84, 0.3); text-align: center;">
+              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: #88C253; color: #202226; font-weight: 700; font-size: 14px; text-decoration: none; padding: 15px 36px; border-radius: 9999px; box-shadow: 0 6px 22px rgba(136, 194, 83, 0.35); text-align: center; letter-spacing: 0.2px;">
                 Richiedi disponibilità su WhatsApp ➔
               </a>
             </td>
           </tr>
           <tr>
             <td align="center" style="padding-bottom: 8px; text-align: center;">
-              <p style="margin: 0; color: #9A9C91; font-size: 12px; text-align: center;">Oppure chiama: <strong>+39 334 308 9759</strong></p>
+              <p style="margin: 0; color: #B5B7AB; font-size: 12.5px; text-align: center;">Oppure chiama: <strong style="color: #F7F8E2;">+39 334 308 9759</strong></p>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-bottom: 22px; text-align: center;">
+            <td align="center" style="padding-bottom: 24px; text-align: center;">
               <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11.5px; text-decoration: underline; text-align: center;">
                 Consulta il listino prezzi ufficiale su fotoromaimmobiliare.it
               </a>
@@ -192,9 +196,9 @@ def build_html_template(target_type, name, zone, city, recipient_email):
           </tr>
         </table>
 
-        <!-- CHIUSURA (CENTRATA & DISTINTA) -->
-        <div style="border-top: 1px solid #44474E; padding-top: 16px; margin-top: 4px; text-align: center;">
-          <p style="margin: 0; text-align: center; color: #F7F8E2; font-size: 13.5px; font-weight: 600; line-height: 1.45;">
+        <!-- CHIUSURA (SITO STYLE) -->
+        <div style="border-top: 1px solid #585C66; padding-top: 18px; margin-top: 6px; text-align: center;">
+          <p style="margin: 0; text-align: center; color: #F7F8E2; font-size: 14px; font-weight: 600; line-height: 1.45;">
             Presenta meglio il tuo immobile. Parti dalle immagini.
           </p>
         </div>
@@ -202,19 +206,19 @@ def build_html_template(target_type, name, zone, city, recipient_email):
       </td>
     </tr>
 
-    <!-- FOOTER ISTITUZIONALE & GDPR COMPLIANCE AUTOMATICO -->
+    <!-- FOOTER ISTITUZIONALE (NAV/FOOTER STYLE SITO) -->
     <tr>
-      <td align="center" style="padding: 20px 24px; background-color: #26282C; border-top: 1px solid #42454B; color: #7F8177; font-size: 11px; line-height: 1.5;">
-        <p style="margin: 0 0 4px 0; font-weight: 600; color: #B5B7AB;">FotoRomaImmobiliare • di Antonio Picariello</p>
+      <td align="center" style="padding: 22px 24px; background-color: #2F3136; border-top: 1px solid #4D5059; color: #93968A; font-size: 11px; line-height: 1.55;">
+        <p style="margin: 0 0 4px 0; font-weight: 600; color: #F7F8E2;">FotoRomaImmobiliare • di Antonio Picariello</p>
         <p style="margin: 0 0 4px 0;">Via Filippo Cremonesi 8, 00155 Roma • P.IVA 15883601002 • Consegna in 72h dal pagamento</p>
         <p style="margin: 0 0 12px 0;">Fotografia d'interni, Video 4K, Drone e Virtual Tour 360° per compravendite e alloggi turistici.</p>
         
-        <div style="border-top: 1px solid #383A3F; padding-top: 10px; font-size: 10px; color: #6D6F66; text-align: center;">
+        <div style="border-top: 1px solid #43464D; padding-top: 10px; font-size: 10px; color: #7E8176; text-align: center;">
           <p style="margin: 0 0 4px 0;">
             <em>Ricevi questa comunicazione informativa B2B in quanto la tua struttura o agenzia è presente su elenchi pubblici, portali di settore o registri di categoria.</em>
           </p>
           <p style="margin: 0;">
-            Se non desideri più ricevere aggiornamenti o proposte, <a href="{auto_unsub_url}" target="_blank" style="color: #87C054; text-decoration: underline;">clicca qui per disiscriverti automaticamente con 1 click</a>.
+            Se non desideri più ricevere aggiornamenti o proposte, <a href="{auto_unsub_url}" target="_blank" style="color: #88C253; text-decoration: underline;">clicca qui per disiscriverti automaticamente con 1 click</a>.
           </p>
         </div>
       </td>
