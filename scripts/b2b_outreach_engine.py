@@ -72,8 +72,9 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     
     hero_img = random.choice(PM_IMAGES) if is_pm else random.choice(AGENCY_IMAGES)
     subject = f"Foto migliori. Clienti migliori. | FotoRomaImmobiliare"
-    badge = "FOTO MIGLIORI. CLIENTI MIGLIORI."
+    headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
     subheadline = "La tua prenotazione inizia da come ti presenti online."
+    presentazione = "Sono Antonio Picariello, fotografo e titolare di FotoRomaImmobiliare.<br>Realizzo fotografie professionali, Virtual Tour e video per strutture ricettive e immobili destinati agli affitti brevi."
     intro = "Prima di prenotare, il tuo ospite guarda il tuo annuncio.<br><br>Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
     
     points = [
@@ -88,19 +89,13 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     for title, desc in points:
         items_html += f"""
         <tr>
-          <td style="padding-bottom: 14px;">
-            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-              <tr>
-                <td width="22" valign="top" style="padding-top: 2px;">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#87C054" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </td>
-                <td style="padding-left: 8px; color: #B5B7AB; font-size: 13px; line-height: 1.55;">
-                  <strong style="color: #87C054; font-weight: 700;">{title}:</strong> {desc}
-                </td>
-              </tr>
-            </table>
+          <td align="center" style="padding: 12px 10px; border-bottom: 1px solid #383A3F; text-align: center;">
+            <p style="margin: 0 0 4px 0; color: #87C054; font-size: 13px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">
+              {title}
+            </p>
+            <p style="margin: 0; color: #B5B7AB; font-size: 12.5px; line-height: 1.5; text-align: center;">
+              {desc}
+            </p>
           </td>
         </tr>
         """
@@ -123,9 +118,9 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     
     <!-- HEADER BRAND (LOGO ORIGINALE INGRANDITO) -->
     <tr>
-      <td align="center" style="padding: 20px 20px 14px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B;">
+      <td align="center" style="padding: 20px 20px 14px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B; text-align: center;">
         <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 82px; max-height: 82px; width: auto; display: block; margin: 0 auto 6px auto;" />
-        <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
+        <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; text-align: center;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
 
@@ -136,29 +131,34 @@ def build_html_template(target_type, name, zone, city, recipient_email):
       </td>
     </tr>
 
-    <!-- CONTENUTO PRINCIPALE -->
+    <!-- CONTENUTO PRINCIPALE (100% CENTRATO) -->
     <tr>
-      <td style="padding: 28px 26px 24px 26px;">
+      <td align="center" style="padding: 28px 26px 24px 26px; text-align: center;">
         
-        <!-- HEADLINE -->
-        <h1 style="margin: 0 0 8px 0; color: #87C054; font-size: 20px; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px;">
-          {badge}
+        <!-- HEADLINE (CENTRATA) -->
+        <h1 style="margin: 0 0 8px 0; color: #87C054; font-size: 20px; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">
+          {headline}
         </h1>
 
-        <!-- SUBHEADLINE -->
-        <p style="margin: 0 0 16px 0; color: #F7F8E2; font-size: 15px; font-weight: 700; line-height: 1.4;">
+        <!-- SUBHEADLINE (CENTRATA) -->
+        <p style="margin: 0 0 18px 0; color: #F7F8E2; font-size: 15px; font-weight: 700; line-height: 1.4; text-align: center;">
           {subheadline}
         </p>
+
+        <!-- BREVISSIMA PRESENTAZIONE (CENTRATA) -->
+        <p style="margin: 0 0 18px 0; color: #D4D6C8; font-size: 13.5px; line-height: 1.55; text-align: center;">
+          {presentazione}
+        </p>
         
-        <!-- TESTO INTRODUTTIVO -->
-        <p style="margin: 0 0 22px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.6;">
+        <!-- INTRODUZIONE COMMERCIALE (CENTRATA) -->
+        <p style="margin: 0 0 24px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.6; text-align: center;">
           {intro}
         </p>
 
-        <!-- CARD SERVIZI -->
+        <!-- CARD SERVIZI (TUTTO CENTRATO) -->
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #2B2D31; border-radius: 14px; border: 1px solid #42454B; margin-bottom: 24px;">
           <tr>
-            <td style="padding: 20px 18px 6px 18px;">
+            <td align="center" style="padding: 10px 18px; text-align: center;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 {items_html}
               </table>
@@ -166,30 +166,30 @@ def build_html_template(target_type, name, zone, city, recipient_email):
           </tr>
         </table>
 
-        <!-- CTA WHATSAPP -->
+        <!-- CTA WHATSAPP (CENTRATA) -->
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
-            <td align="center" style="padding-bottom: 12px;">
+            <td align="center" style="padding-bottom: 12px; text-align: center;">
               <a href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: #87C054; color: #1E2024; font-weight: 700; font-size: 14px; text-decoration: none; padding: 13px 32px; border-radius: 9px; box-shadow: 0 4px 14px rgba(135, 192, 84, 0.3); white-space: nowrap;">
                 Richiedi disponibilità su WhatsApp ➔
               </a>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-bottom: 6px;">
-              <p style="margin: 0; color: #9A9C91; font-size: 12px;">Oppure chiama: <strong>+39 334 308 9759</strong></p>
+            <td align="center" style="padding-bottom: 6px; text-align: center;">
+              <p style="margin: 0; color: #9A9C91; font-size: 12px; text-align: center;">Oppure chiama: <strong>+39 334 308 9759</strong></p>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-bottom: 18px;">
-              <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11px; text-decoration: underline;">
+            <td align="center" style="padding-bottom: 18px; text-align: center;">
+              <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11px; text-decoration: underline; text-align: center;">
                 Consulta il listino prezzi ufficiale su fotoromaimmobiliare.it
               </a>
             </td>
           </tr>
         </table>
 
-        <!-- CHIUSURA -->
+        <!-- CHIUSURA (CENTRATA) -->
         <p style="margin: 6px 0 0 0; text-align: center; color: #F7F8E2; font-size: 13px; font-weight: 600; line-height: 1.4;">
           Presenta meglio il tuo immobile. Parti dalle immagini.
         </p>
