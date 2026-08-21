@@ -181,8 +181,8 @@ def build_html_template(target_type, name, zone, city, recipient_email):
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td align="center" style="padding-bottom: 14px; text-align: center;">
-              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: rgba(53, 55, 61, 0.4); border: 1.5px solid #88C253; color: #F7F8E2; font-weight: 600; font-size: 14px; text-decoration: none; padding: 13px 34px; border-radius: 9999px; text-align: center; letter-spacing: 0.2px;">
-                Scrivimi su WhatsApp ➔
+              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: rgba(53, 55, 61, 0.4); border: 1.5px solid #88C253; color: #F7F8E2; font-weight: 600; font-size: 14px; text-decoration: none; padding: 13px 38px; border-radius: 9999px; text-align: center; letter-spacing: 0.2px;">
+                Scrivimi
               </a>
             </td>
           </tr>
