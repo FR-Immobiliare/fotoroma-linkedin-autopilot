@@ -31,7 +31,7 @@ if os.path.exists(env_file):
 LINKEDIN_ACCESS_TOKEN = os.getenv("LINKEDIN_ACCESS_TOKEN")
 LINKEDIN_AUTHOR_URN = os.getenv("LINKEDIN_AUTHOR_URN")  # es. "urn:li:organization:XXXX"
 FACEBOOK_PAGE_ACCESS_TOKEN = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN") or os.getenv("META_PAGE_ACCESS_TOKEN")
-FACEBOOK_PAGE_ID = os.getenv("FACEBOOK_PAGE_ID") or os.getenv("META_PAGE_ID", "61583126505444")
+FACEBOOK_PAGE_ID = os.getenv("FACEBOOK_PAGE_ID") or os.getenv("META_PAGE_ID", "861246003736290")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 QUEUE_DIR = os.path.join(os.path.dirname(__file__), "..", "queue_photos")
