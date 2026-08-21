@@ -27,6 +27,8 @@ jobs:
   outreach_job:
     if: github.event.schedule == '30 7 * * 1-5' || github.event.schedule == '0 18 * * *' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,6 +65,8 @@ jobs:
   midnight_report_job:
     if: github.event.schedule == '0 22 * * *' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'midnight_report')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -84,6 +88,8 @@ jobs:
   weekly_report_job:
     if: github.event.schedule == '0 15 * * 3' || (github.event_name == 'workflow_dispatch' && (inputs.action_type == 'weekly_report' || inputs.action_type == 'clean_and_harvest'))
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
