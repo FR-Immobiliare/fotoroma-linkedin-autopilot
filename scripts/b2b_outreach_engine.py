@@ -21,7 +21,7 @@ SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "fotoroma18@gmail.com")
 SMTP_PASS = os.getenv("SMTP_PASS", "unsvwxfhkugkklly")
-SENDER_DISPLAY = "Antonio Picariello | FotoRomaImmobiliare"
+SENDER_DISPLAY = "FotoRomaImmobiliare"
 SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
@@ -253,6 +253,12 @@ def send_outreach_batch(max_emails=35):
                 zone = row.get("zona") or row.get("Zona") or row.get("zone") or ""
                 city = row.get("citta") or row.get("Citta") or row.get("city") or "Roma"
                 target_type = row.get("categoria") or row.get("Categoria") or row.get("type") or "AIRBNB"
+                
+                # ESCLUSIONE RESTRITTIVA NAPOLI SU RICHIESTA UTENTE
+                full_info = f"{city} {zone} {name} {target_type} {email}".lower()
+                if "napoli" in full_info:
+                    continue
+
                 candidates.append({
                     "email": email,
                     "name": name,
