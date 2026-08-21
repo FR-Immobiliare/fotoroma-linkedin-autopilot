@@ -86,18 +86,17 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     whatsapp_msg = f"Ciao,%20ti%20contatto%20dall%27email%20di%20FotoRomaImmobiliare.it,%20vorrei%20informazioni%20per%20un%20servizio%20fotografico"
 
     items_html = ""
-    for title, desc in points:
+    for i, (title, desc) in enumerate(points):
+        mb = "12px" if i < len(points) - 1 else "0"
         items_html += f"""
-        <tr>
-          <td align="center" style="padding: 12px 10px; border-bottom: 1px solid #383A3F; text-align: center;">
-            <p style="margin: 0 0 4px 0; color: #87C054; font-size: 13px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">
-              {title}
-            </p>
-            <p style="margin: 0; color: #B5B7AB; font-size: 12.5px; line-height: 1.5; text-align: center;">
-              {desc}
-            </p>
-          </td>
-        </tr>
+        <div style="background-color: #282A2E; border: 1px solid #3E4147; border-radius: 12px; padding: 15px 14px; margin-bottom: {mb}; text-align: center;">
+          <p style="margin: 0 0 6px 0; color: #87C054; font-size: 13px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.35;">
+            {title}
+          </p>
+          <p style="margin: 0; color: #B5B7AB; font-size: 12.5px; line-height: 1.55; text-align: center;">
+            {desc}
+          </p>
+        </div>
         """
 
     auto_unsub_url = f"https://www.fotoromaimmobiliare.it/disiscrizione?email={urllib.parse.quote(recipient_email)}"
@@ -105,21 +104,31 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     tracking_pixel_url = f"https://www.fotoromaimmobiliare.it/assets/logo.png?trk={urllib.parse.quote(recipient_email)}&cat={category_code}&t={int(time.time())}"
 
     html = f"""<!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
   <title>FotoRomaImmobiliare</title>
+  <style>
+    @media only screen and (max-width: 520px) {{
+      .wrapper-table {{ width: 100% !important; border-radius: 0 !important; }}
+      .content-cell {{ padding: 24px 16px !important; }}
+      .headline-text {{ font-size: 18px !important; }}
+      .subheadline-text {{ font-size: 14px !important; }}
+      .intro-text {{ font-size: 13px !important; }}
+      .cta-btn {{ display: block !important; width: 100% !important; box-sizing: border-box !important; padding: 14px 12px !important; font-size: 13.5px !important; }}
+    }}
+  </style>
 </head>
-<body style="margin: 0; padding: 24px 0; background-color: #24262A; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F7F8E2; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 16px 0; background-color: #1E2024; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #F7F8E2; -webkit-font-smoothing: antialiased;">
   
-  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
+  <table class="wrapper-table" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #33353B; border-radius: 18px; overflow: hidden; margin: 0 auto; border: 1px solid #484B52; box-shadow: 0 16px 36px rgba(0,0,0,0.45);">
     
-    <!-- HEADER BRAND (LOGO ORIGINALE INGRANDITO) -->
+    <!-- HEADER BRAND -->
     <tr>
-      <td align="center" style="padding: 20px 20px 14px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B; text-align: center;">
-        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 82px; max-height: 82px; width: auto; display: block; margin: 0 auto 6px auto;" />
+      <td align="center" style="padding: 22px 20px 16px 20px; background-color: #282A2E; border-bottom: 1px solid #42454B; text-align: center;">
+        <img src="{LOGO_B64}" alt="FotoRomaImmobiliare" style="height: 76px; max-height: 76px; width: auto; display: block; margin: 0 auto 6px auto;" />
         <p style="margin: 0; color: #F7F8E2; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; text-align: center;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
@@ -127,72 +136,68 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     <!-- HERO IMAGE ROTANTE -->
     <tr>
       <td style="padding: 0;">
-        <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 240px; object-fit: cover; display: block;" />
+        <img src="{hero_img}" alt="Photography Roma" style="width: 100%; max-height: 220px; object-fit: cover; display: block;" />
       </td>
     </tr>
 
-    <!-- CONTENUTO PRINCIPALE (100% CENTRATO) -->
+    <!-- CONTENUTO PRINCIPALE (100% CENTRATO CON SPAZIATURE ARMONIOSE) -->
     <tr>
-      <td align="center" style="padding: 28px 26px 24px 26px; text-align: center;">
+      <td class="content-cell" align="center" style="padding: 30px 28px 26px 28px; text-align: center;">
         
         <!-- HEADLINE (CENTRATA) -->
-        <h1 style="margin: 0 0 8px 0; color: #87C054; font-size: 20px; font-weight: 800; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">
+        <h1 class="headline-text" style="margin: 0 0 10px 0; color: #87C054; font-size: 20px; font-weight: 800; line-height: 1.35; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">
           {headline}
         </h1>
 
         <!-- SUBHEADLINE (CENTRATA) -->
-        <p style="margin: 0 0 18px 0; color: #F7F8E2; font-size: 15px; font-weight: 700; line-height: 1.4; text-align: center;">
+        <p class="subheadline-text" style="margin: 0 0 20px 0; color: #F7F8E2; font-size: 15px; font-weight: 700; line-height: 1.45; text-align: center;">
           {subheadline}
         </p>
 
         <!-- BREVISSIMA PRESENTAZIONE (CENTRATA) -->
-        <p style="margin: 0 0 18px 0; color: #D4D6C8; font-size: 13.5px; line-height: 1.55; text-align: center;">
+        <p style="margin: 0 0 20px 0; color: #D4D6C8; font-size: 13.5px; line-height: 1.6; text-align: center;">
           {presentazione}
         </p>
         
         <!-- INTRODUZIONE COMMERCIALE (CENTRATA) -->
-        <p style="margin: 0 0 24px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.6; text-align: center;">
+        <p class="intro-text" style="margin: 0 0 26px 0; color: #B5B7AB; font-size: 13.5px; line-height: 1.65; text-align: center;">
           {intro}
         </p>
 
-        <!-- CARD SERVIZI (TUTTO CENTRATO) -->
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #2B2D31; border-radius: 14px; border: 1px solid #42454B; margin-bottom: 24px;">
-          <tr>
-            <td align="center" style="padding: 10px 18px; text-align: center;">
-              <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                {items_html}
-              </table>
-            </td>
-          </tr>
-        </table>
+        <!-- SCHEDE SERVIZI SPAZIATE & LEGGIBILI SU MOBILE -->
+        <div style="margin-bottom: 28px; text-align: center;">
+          {items_html}
+        </div>
 
-        <!-- CTA WHATSAPP (CENTRATA) -->
+        <!-- CTA WHATSAPP (CENTRATA & VISIBILE) -->
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
-            <td align="center" style="padding-bottom: 12px; text-align: center;">
-              <a href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: #87C054; color: #1E2024; font-weight: 700; font-size: 14px; text-decoration: none; padding: 13px 32px; border-radius: 9px; box-shadow: 0 4px 14px rgba(135, 192, 84, 0.3); white-space: nowrap;">
+            <td align="center" style="padding-bottom: 14px; text-align: center;">
+              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: #87C054; color: #1E2024; font-weight: 700; font-size: 14px; text-decoration: none; padding: 14px 34px; border-radius: 9px; box-shadow: 0 4px 14px rgba(135, 192, 84, 0.3); text-align: center;">
                 Richiedi disponibilità su WhatsApp ➔
               </a>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-bottom: 6px; text-align: center;">
+            <td align="center" style="padding-bottom: 8px; text-align: center;">
               <p style="margin: 0; color: #9A9C91; font-size: 12px; text-align: center;">Oppure chiama: <strong>+39 334 308 9759</strong></p>
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding-bottom: 18px; text-align: center;">
-              <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11px; text-decoration: underline; text-align: center;">
+            <td align="center" style="padding-bottom: 22px; text-align: center;">
+              <a href="{prezzi_url}" target="_blank" style="color: #B5B7AB; font-size: 11.5px; text-decoration: underline; text-align: center;">
                 Consulta il listino prezzi ufficiale su fotoromaimmobiliare.it
               </a>
             </td>
           </tr>
         </table>
 
-        <!-- CHIUSURA (CENTRATA) -->
-        <p style="margin: 6px 0 0 0; text-align: center; color: #F7F8E2; font-size: 13px; font-weight: 600; line-height: 1.4;">
-          Presenta meglio il tuo immobile. Parti dalle immagini.
-        </p>
+        <!-- CHIUSURA (CENTRATA & DISTINTA) -->
+        <div style="border-top: 1px solid #44474E; padding-top: 16px; margin-top: 4px; text-align: center;">
+          <p style="margin: 0; text-align: center; color: #F7F8E2; font-size: 13.5px; font-weight: 600; line-height: 1.45;">
+            Presenta meglio il tuo immobile. Parti dalle immagini.
+          </p>
+        </div>
 
       </td>
     </tr>
