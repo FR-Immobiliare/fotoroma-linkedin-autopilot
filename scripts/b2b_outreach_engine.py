@@ -71,7 +71,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     category_code = "AIRBNB_HOST_PM" if is_pm else "AGENZIE_IMMOBILIARI"
     
     hero_img = random.choice(PM_IMAGES) if is_pm else random.choice(AGENCY_IMAGES)
-    subject = f"Foto migliori. Clienti migliori. | FotoRomaImmobiliare"
+    subject = "IL TUO OSPITE SCEGLIE CON GLI OCCHI"
     headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
     subheadline = "La tua prossima prenotazione dipende da come ti presenti online."
     presentazione = "Sono Antonio, fotografo e titolare di <span style=\"color: #D4D6C8; text-decoration: none !important; border: none !important;\">FotoRomaImmobiliare&#8203;.it</span>.<br>Realizzo fotografie professionali, Virtual Tour e video per strutture ricettive e immobili destinati agli affitti brevi."
