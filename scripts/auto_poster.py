@@ -29,32 +29,39 @@ if os.path.exists(env_file):
 
 # Environment Secrets
 LINKEDIN_ACCESS_TOKEN = os.getenv("LINKEDIN_ACCESS_TOKEN")
-LINKEDIN_AUTHOR_URN = os.getenv("LINKEDIN_AUTHOR_URN")  # es. "urn:li:person:XXXX" o "urn:li:organization:XXXX"
+LINKEDIN_AUTHOR_URN = os.getenv("LINKEDIN_AUTHOR_URN")  # es. "urn:li:organization:XXXX"
+FACEBOOK_PAGE_ACCESS_TOKEN = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN") or os.getenv("META_PAGE_ACCESS_TOKEN")
+FACEBOOK_PAGE_ID = os.getenv("FACEBOOK_PAGE_ID") or os.getenv("META_PAGE_ID", "61583126505444")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
 
 QUEUE_DIR = os.path.join(os.path.dirname(__file__), "..", "queue_photos")
 PUBLISHED_DIR = os.path.join(os.path.dirname(__file__), "..", "published")
 
 PROMPT_SYSTEM = """
-Sei il Social Media Strategist esperto per FotoRomaImmobiliare (fondata da Antonio Picariello a Roma).
-Il tuo obiettivo su LinkedIn è attrarre e convertire: Agenti Immobiliari, Property Manager, Host Airbnb e Costruttori.
+Sei il Social Media Strategist esperto per FotoRomaImmobiliare (fondata da Antonio a Roma, sito ufficiale: fotoromaimmobiliare.it).
+Il tuo obiettivo è attrarre e convertire: Agenti Immobiliari, Property Manager, Host Airbnb e Proprietari.
+
+USA UNO DEI SEGUENTI SLOGAN UFFICIALI COME GANCIO / HEADLINE INIZIALE:
+- "FOTO MIGLIORI. CLIENTI MIGLIORI."
+- "IL TUO OSPITE SCEGLIE CON GLI OCCHI."
+- "LA PRIMA VISITA AL TUO IMMOBILE AVVIENE ATTRAVERSO LE FOTO CHE MOSTRI ONLINE."
+- "LA TUA PROSSIMA PRENOTAZIONE DIPENDE DA COME TI PRESENTI ONLINE."
 
 LINEE GUIDA RIGIDE PER IL COPY:
-1. NON USARE MAI termini tecnici come 'Flambient', ISO, tempi di scatto o tecnicismi fotografici.
-2. VENDI I BENEFICI DI BUSINESS: spiegare come una foto luminosa e fedele aiuti a:
-   - Filtrare a monte i 'turisti immobiliari' e i curiosi
-   - Evitare appuntamenti e sopralluoghi a vuoto
-   - Evitare che il cliente resti deluso al sopralluogo dal vivo
-   - Accelerare le vendite/affitti e proteggere il valore dell'immobile senza sconti
+1. NON USARE MAI termini tecnici fotografici (no ISO, diaframmi, flambient).
+2. VENDI I BENEFICI DI BUSINESS:
+   - Filtrare i curiosi e i perditempo a monte
+   - Evitare visite e sopralluoghi a vuoto
+   - Aumentare le conversioni e proteggere il prezzo di vendita o il prezzo per notte senza sconti
+   - Servizi: Foto grandangolari d'interni, Virtual Tour 360° Matterport, Drone 4K (Consegna rapida in 72h)
 3. FORMATTAZIONE:
-   - Hook iniziale forte (prima riga senza convenevoli, niente 'buongiorno a tutti')
+   - Gancio forte in maiuscolo
    - Frasi corte, paragrafi ariosi
-   - Usa 2-3 emoji sobrie (📍, 📈, 🏠, 🤝)
-   - Cita la zona/indirizzo reale fornito
-   - Call to Action sobria finale: invitare a un messaggio in privato o su WhatsApp per un parere sul proprio portfolio annunci.
-4. HASHTAG: Aggiungi 3-4 hashtag alla fine (es. #FotografiaImmobiliare #RealEstateRoma #FotoRomaImmobiliare #AgenziaImmobiliare).
-5. Lingua: Italiano perfetto, professionale ma diretto.
+   - 2-3 emoji sobrie (📍, 📸, 🔑, 🤝)
+   - Cita la via o la zona reale fornita
+   - Call to Action: invitare a un messaggio in privato o su WhatsApp al +39 334 308 9759
+4. HASHTAG: #FotografiaImmobiliare #RealEstateRoma #FotoRomaImmobiliare #AirbnbRoma #PropertyManager
+5. Lingua: Italiano impeccabile, elegante e commerciale.
 """
 
 def get_next_photo():
@@ -67,31 +74,33 @@ def get_next_photo():
 
 def generate_copy_with_ai(photo_path):
     filename = os.path.basename(photo_path)
-    # Estrai il nome del luogo dal file (es. 01_Campo_de_Fiori_19.jpg -> Campo de Fiori 19)
     raw_location = os.path.splitext(filename)[0]
     if raw_location[:3].replace("_", "").isdigit():
         raw_location = raw_location[3:]
-    location_name = raw_location.replace("_", " ")
+    location_name = raw_location.replace("_", " ").replace("FRI", "").strip()
 
     if not GEMINI_API_KEY:
-        # Fallback copy di altissimo livello se l'API key non è ancora impostata
-        return f"""Quanti sopralluoghi fate a settimana con persone che dal vivo dicono: "Ah, ma dalle foto sembrava diversa"?
+        # Fallback copy di altissimo livello se l'API key non è impostata
+        return f"""FOTO MIGLIORI. CLIENTI MIGLIORI.
+La prima visita al tuo immobile avviene attraverso le foto che mostri online.
 
-Le foto scure o ingannevoli creano due problemi per chi vende o affitta:
-1. Portano decine di curiosi e perditempo in visita.
-2. Creano delusione appena si varca la soglia d'ingresso.
+Quanti sopralluoghi fate a settimana con persone che poi dicono: "Ah, ma dalle foto sembrava diversa"?
+
+Le immagini sono il primo contatto con il tuo immobile: determinano se un potenziale acquirente o ospite chiederà informazioni oppure passerà oltre.
 
 📍 Servizio fotografico professionale recente per questo immobile in zona {location_name} (Roma).
 
-Mostrare gli spazi con la luce giusta e la corretta proporzione serve a filtrare a monte i contatti: chi vi chiama ha già compreso l'immobile e viene al sopralluogo pronto a fare una proposta seria.
+📸 Foto grandangolari HDR + Virtual Tour 360° Matterport.
+⏱️ Consegna rapida in 72h dal pagamento pronta per tutti i portali online.
 
-Meno tempo perso per strada, trattative più qualificate.
+Meno tempo perso per strada, contatti più qualificati.
 
-📩 Hai un incarico o un immobile da valorizzare a Roma? Scrivimi in privato o su WhatsApp (+39 334 308 9759).
+💬 Hai un incarico o una struttura da valorizzare a Roma? Scrivimi in privato o su WhatsApp al +39 334 308 9759.
 
-#FotografiaImmobiliare #RealEstateRoma #FotoRomaImmobiliare #ImmobiliareRoma"""
+🌐 Portfolio e tariffe: fotoromaimmobiliare.it
 
-    # Chiamata API Gemini
+#FotografiaImmobiliare #RealEstateRoma #FotoRomaImmobiliare #ImmobiliareRoma #AirbnbRoma"""
+
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
     
     with open(photo_path, "rb") as f:
@@ -103,7 +112,7 @@ Meno tempo perso per strada, trattative più qualificate.
         "contents": [
             {
                 "parts": [
-                    {"text": f"{PROMPT_SYSTEM}\n\nIndirizzo/Location dello shooting: {location_name}. Scrivi il post LinkedIn perfetto per accompagnare questa foto."},
+                    {"text": f"{PROMPT_SYSTEM}\n\nIndirizzo/Location dello shooting: {location_name}. Scrivi il post perfetto per accompagnare questa foto."},
                     {
                         "inline_data": {
                             "mime_type": mime_type,
@@ -126,7 +135,47 @@ Meno tempo perso per strada, trattative più qualificate.
             return data["candidates"][0]["content"]["parts"][0]["text"].strip()
     except Exception as e:
         print(f"Errore chiamata Gemini: {e}")
-        return f"Servizio fotografico professionale per immobile a Roma ({location_name}). Foto ad alta definizione per qualificare le visite ed evitare perdite di tempo sui portali.\n\n#FotografiaImmobiliare #FotoRomaImmobiliare"
+        return f"FOTO MIGLIORI. CLIENTI MIGLIORI.\nLa prima visita al tuo immobile avviene attraverso le foto che mostri online.\n\n📍 Servizio fotografico professionale in zona {location_name} (Roma).\nConsegna in 72h dal pagamento.\n\n💬 Scrivimi su WhatsApp (+39 334 308 9759) o visita fotoromaimmobiliare.it"
+
+def publish_to_facebook(photo_path, caption):
+    if not FACEBOOK_PAGE_ACCESS_TOKEN:
+        print("ℹ️ FACEBOOK_PAGE_ACCESS_TOKEN non configurato (Skip pubblicazione FB).")
+        return None
+
+    print(f"[{datetime.now().isoformat()}] Pubblicazione immagine su Pagina Facebook ({FACEBOOK_PAGE_ID})...")
+    
+    # Upload multipart diretto
+    url = f"https://graph.facebook.com/v19.0/{FACEBOOK_PAGE_ID}/photos"
+    boundary = "----WebKitFormBoundary" + os.urandom(16).hex()
+    
+    with open(photo_path, "rb") as f:
+        photo_bytes = f.read()
+
+    body = bytearray()
+    body.extend(f"--{boundary}\r\n".encode())
+    body.extend(b'Content-Disposition: form-data; name="caption"\r\n\r\n')
+    body.extend(caption.encode("utf-8") + b"\r\n")
+
+    body.extend(f"--{boundary}\r\n".encode())
+    body.extend(b'Content-Disposition: form-data; name="access_token"\r\n\r\n')
+    body.extend(FACEBOOK_PAGE_ACCESS_TOKEN.encode("utf-8") + b"\r\n")
+
+    body.extend(f"--{boundary}\r\n".encode())
+    body.extend(f'Content-Disposition: form-data; name="source"; filename="{os.path.basename(photo_path)}"\r\n'.encode())
+    body.extend(b"Content-Type: image/jpeg\r\n\r\n")
+    body.extend(photo_bytes + b"\r\n")
+    body.extend(f"--{boundary}--\r\n".encode())
+
+    req = urllib.request.Request(url, data=bytes(body), headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            res = json.loads(resp.read().decode("utf-8"))
+            post_id = res.get("id") or res.get("post_id")
+            print(f"✅ Foto pubblicata con successo su Facebook! Post ID: {post_id}")
+            return post_id
+    except Exception as e:
+        print(f"❌ Errore upload Facebook: {e}")
+        return None
 
 def upload_image_to_linkedin(photo_path, author_urn, token):
     headers = {
@@ -135,7 +184,6 @@ def upload_image_to_linkedin(photo_path, author_urn, token):
         "X-Restli-Protocol-Version": "2.0.0"
     }
 
-    # Step 1: Register Upload
     register_url = "https://api.linkedin.com/v2/assets?action=registerUpload"
     register_body = {
         "registerUploadRequest": {
@@ -152,7 +200,6 @@ def upload_image_to_linkedin(photo_path, author_urn, token):
     upload_url = reg_data["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
     asset_urn = reg_data["value"]["asset"]
 
-    # Step 2: Binary Upload
     with open(photo_path, "rb") as f:
         img_bytes = f.read()
 
@@ -201,39 +248,48 @@ def publish_linkedin_post(text, asset_urn, author_urn, token):
         return res.get("id")
 
 def main():
-    print(f"[{datetime.now().isoformat()}] Avvio FotoRomaImmobiliare LinkedIn Autopilot...")
+    print(f"[{datetime.now().isoformat()}] Avvio FotoRomaImmobiliare Social Cloud Engine...")
     
     photo = get_next_photo()
     if not photo:
         print("Coda foto vuota! Inserisci nuove immagini in queue_photos/.")
         sys.exit(0)
 
-    print(f"Foto selezionata per la pubblicazione: {os.path.basename(photo)}")
+    print(f"📸 Foto selezionata dalla coda: {os.path.basename(photo)}")
     
-    # Genera il copy con AI
+    # 1. Genera il copy strategico con gancio / slogan
     post_text = generate_copy_with_ai(photo)
-    print("\n--- TESTO GENERATO DALL'AI ---")
+    print("\n--- TESTO STRATEGICO GENERATO ---")
     print(post_text)
-    print("------------------------------\n")
+    print("---------------------------------\n")
 
-    if not LINKEDIN_ACCESS_TOKEN or not LINKEDIN_AUTHOR_URN:
-        print("ATTENZIONE: LINKEDIN_ACCESS_TOKEN o LINKEDIN_AUTHOR_URN mancanti.")
-        print("Test locale completato con successo (generazione AI e selezione immagine OK).")
-        sys.exit(0)
+    fb_ok = False
+    li_ok = False
 
-    # Upload su LinkedIn
-    print("Caricamento immagine su LinkedIn...")
-    asset_urn = upload_image_to_linkedin(photo, LINKEDIN_AUTHOR_URN, LINKEDIN_ACCESS_TOKEN)
-    print(f"Asset registrato: {asset_urn}")
+    # 2. Pubblica su Facebook Page (se token presente)
+    if FACEBOOK_PAGE_ACCESS_TOKEN:
+        fb_id = publish_to_facebook(photo, post_text)
+        if fb_id:
+            fb_ok = True
 
-    print("Pubblicazione post su LinkedIn...")
-    post_id = publish_linkedin_post(post_text, asset_urn, LINKEDIN_AUTHOR_URN, LINKEDIN_ACCESS_TOKEN)
-    print(f"✅ Post pubblicato con successo! Post ID: {post_id}")
+    # 3. Pubblica su LinkedIn (se token presente)
+    if LINKEDIN_ACCESS_TOKEN and LINKEDIN_AUTHOR_URN:
+        try:
+            print("Caricamento immagine su LinkedIn...")
+            asset_urn = upload_image_to_linkedin(photo, LINKEDIN_AUTHOR_URN, LINKEDIN_ACCESS_TOKEN)
+            print("Pubblicazione post su LinkedIn...")
+            li_id = publish_linkedin_post(post_text, asset_urn, LINKEDIN_AUTHOR_URN, LINKEDIN_ACCESS_TOKEN)
+            print(f"✅ Post pubblicato su LinkedIn! ID: {li_id}")
+            li_ok = True
+        except Exception as e:
+            print(f"❌ Errore LinkedIn: {e}")
 
-    # Archiviazione foto pubblicata
-    dest_path = os.path.join(PUBLISHED_DIR, os.path.basename(photo))
-    shutil.move(photo, dest_path)
-    print(f"Foto spostata in archivio: {dest_path}")
+    # 4. Sposta la foto in published/ solo se almeno un canale ha pubblicato
+    if fb_ok or li_ok or not (FACEBOOK_PAGE_ACCESS_TOKEN or LINKEDIN_ACCESS_TOKEN):
+        dest_path = os.path.join(PUBLISHED_DIR, os.path.basename(photo))
+        if os.path.exists(photo):
+            shutil.move(photo, dest_path)
+            print(f"📁 Foto archiviata in published/: {os.path.basename(photo)}")
 
 if __name__ == "__main__":
     main()

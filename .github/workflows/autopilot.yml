@@ -1,10 +1,10 @@
-name: FotoRomaImmobiliare LinkedIn Autopilot
+name: FotoRomaImmobiliare Social Cloud Engine (Facebook & LinkedIn)
 
 on:
   schedule:
-    # Gira ogni Martedì e Venerdì alle 08:00 UTC (10:00 ora italiana)
-    - cron: '0 8 * * 2,5'
-  workflow_dispatch: # Permette di avviare manualmente con un clic su GitHub
+    # 2 volte a settimana: Martedì e Venerdì alle 08:30 UTC (10:30 ora italiana)
+    - cron: '30 8 * * 2,5'
+  workflow_dispatch:
 
 jobs:
   publish-post:
@@ -21,10 +21,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run Autopilot Engine
+      - name: Run Social Cloud Engine
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN || secrets.META_PAGE_ACCESS_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID || '61583126505444' }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python scripts/auto_poster.py
