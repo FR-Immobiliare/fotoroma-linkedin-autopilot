@@ -40,19 +40,20 @@ jobs:
 
       - name: 1. Rileva email respinte (Bounces) e pulisci liste
         env:
-          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.ionos.it' }}
-          SMTP_USER: ${{ secrets.SMTP_USER || 'info@fotoromaimmobiliare.it' }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.gmail.com' }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
+          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
         run: |
           python scripts/bounce_and_mx_validator.py
           python scripts/lead_autoloader_and_cleaner.py
 
       - name: 2. Esegui invio batch sicuro anti-spam (30 email max)
         env:
-          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.ionos.it' }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.gmail.com' }}
           SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
-          SMTP_USER: ${{ secrets.SMTP_USER || 'info@fotoromaimmobiliare.it' }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
         run: |
           python scripts/b2b_outreach_engine.py
 

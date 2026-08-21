@@ -17,10 +17,10 @@ from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-SMTP_HOST = os.getenv("SMTP_HOST", "smtp.ionos.it")
+SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER", "info@fotoromaimmobiliare.it")
-SMTP_PASS = os.getenv("SMTP_PASS", "")
+SMTP_USER = os.getenv("SMTP_USER", "fotoroma18@gmail.com")
+SMTP_PASS = os.getenv("SMTP_PASS", "unsvwxfhkugkklly")
 SENDER_DISPLAY = "FotoRomaImmobiliare"
 SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 
