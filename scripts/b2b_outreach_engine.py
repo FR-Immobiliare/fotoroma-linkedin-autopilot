@@ -37,20 +37,7 @@ LOGO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/lo
 with open(LOGO_PATH, "rb") as f:
     LOGO_B64 = f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
 
-PM_IMAGES = [
-    "https://fotoromaimmobiliare.it/hero_airbnb_pm.jpg",
-    "https://fotoromaimmobiliare.it/hero_pm/008%20-%20antoniopicariello.it%20-%20via%20candia%2065_-Modifica.jpg",
-    "https://fotoromaimmobiliare.it/hero_pm/038%20-%20antoniopicariello.it%20-%203343089759%20-%20%20Via%20Capo%20d%27Africa%2015_.jpg",
-    "https://fotoromaimmobiliare.it/hero_pm/218%20-%20antoniopicariello.it%20-%203343089759%20-%20%20Bea%20Suites_-2.jpg"
-]
-
-AGENCY_IMAGES = [
-    "https://fotoromaimmobiliare.it/hero_agency/ZZ6_8894.jpg",
-    "https://fotoromaimmobiliare.it/hero_agency/ZZ6_8893-2-2.jpg",
-    "https://fotoromaimmobiliare.it/hero_agency/DSC_1225.jpg",
-    "https://fotoromaimmobiliare.it/hero_agency/DSC_1200.jpg",
-    "https://fotoromaimmobiliare.it/hero_agency/DSC_2022-HDR-2.jpg"
-]
+MASTER_HERO_IMAGE = "https://www.fotoromaimmobiliare.it/hero_email_master.jpg"
 
 def load_unsubscribed():
     if not os.path.exists(UNSUBSCRIBE_FILE):
@@ -70,7 +57,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     is_pm = "AIRBNB" in target_type.upper() or "HOST" in target_type.upper() or "PROPERTY" in target_type.upper()
     category_code = "AIRBNB_HOST_PM" if is_pm else "AGENZIE_IMMOBILIARI"
     
-    hero_img = random.choice(PM_IMAGES) if is_pm else random.choice(AGENCY_IMAGES)
+    hero_img = MASTER_HERO_IMAGE
     subject = "IL TUO OSPITE SCEGLIE CON GLI OCCHI"
     headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
     subheadline = "La tua prossima prenotazione dipende da come ti presenti online."
