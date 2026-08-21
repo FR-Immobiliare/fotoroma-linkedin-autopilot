@@ -33,11 +33,22 @@ CONTACTS_FILES = [
 LOG_FILE = os.path.join(DATA_DIR, "contacted_log.csv")
 UNSUBSCRIBE_FILE = os.path.join(DATA_DIR, "unsubscribed.csv")
 
-LOGO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/logo_fotoroma_perfect_green.png"
+LOGO_PATH = os.path.join(DATA_DIR, "logo_fotoroma_perfect_green.png")
+if not os.path.exists(LOGO_PATH):
+    LOGO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/logo_fotoroma_perfect_green.png"
+
 with open(LOGO_PATH, "rb") as f:
     LOGO_B64 = f"data:image/png;base64,{base64.b64encode(f.read()).decode('utf-8')}"
 
-MASTER_HERO_IMAGE = "https://www.fotoromaimmobiliare.it/hero_email_master.jpg"
+HERO_PATH = os.path.join(DATA_DIR, "hero_email_master.jpg")
+if not os.path.exists(HERO_PATH):
+    HERO_PATH = "/Users/antoniopicariello/Desktop/Repo/FotoRomaImmobiliare/public/hero_email_master.jpg"
+
+if os.path.exists(HERO_PATH):
+    with open(HERO_PATH, "rb") as f:
+        HERO_B64 = f"data:image/jpeg;base64,{base64.b64encode(f.read()).decode('utf-8')}"
+else:
+    HERO_B64 = "https://www.fotoromaimmobiliare.it/hero_email_master.jpg"
 
 def load_unsubscribed():
     if not os.path.exists(UNSUBSCRIBE_FILE):
@@ -57,7 +68,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     is_pm = "AIRBNB" in target_type.upper() or "HOST" in target_type.upper() or "PROPERTY" in target_type.upper()
     category_code = "AIRBNB_HOST_PM" if is_pm else "AGENZIE_IMMOBILIARI"
     
-    hero_img = MASTER_HERO_IMAGE
+    hero_img = HERO_B64
     subject = "IL TUO OSPITE SCEGLIE CON GLI OCCHI"
     headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
     subheadline = "La tua prossima prenotazione dipende da come ti presenti online."
