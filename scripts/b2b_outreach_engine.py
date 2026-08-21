@@ -177,12 +177,12 @@ def build_html_template(target_type, name, zone, city, recipient_email):
           {items_html}
         </div>
 
-        <!-- CTA WHATSAPP (PILL OUTLINE STYLE - TESTO CHIARO & BORDO VERDE) -->
+        <!-- CTA WHATSAPP (PILL OUTLINE STYLE - TESTO CHIARO & BORDO VERDE PULITO) -->
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td align="center" style="padding-bottom: 14px; text-align: center;">
-              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: rgba(53, 55, 61, 0.4); border: 1.5px solid #88C253; color: #F7F8E2; font-weight: 600; font-size: 14px; text-decoration: none; padding: 14px 34px; border-radius: 9999px; box-shadow: 0 0 20px rgba(136, 194, 83, 0.18); text-align: center; letter-spacing: 0.2px;">
-                <span style="color: #88C253; font-size: 16px; vertical-align: middle; margin-right: 6px;">💬</span> Richiedi disponibilità su WhatsApp ➔
+              <a class="cta-btn" href="https://wa.me/393343089759?text={whatsapp_msg}" target="_blank" style="display: inline-block; background-color: rgba(53, 55, 61, 0.4); border: 1.5px solid #88C253; color: #F7F8E2; font-weight: 600; font-size: 14px; text-decoration: none; padding: 13px 32px; border-radius: 9999px; text-align: center; letter-spacing: 0.2px;">
+                Richiedi disponibilità su WhatsApp ➔
               </a>
             </td>
           </tr>
@@ -202,8 +202,8 @@ def build_html_template(target_type, name, zone, city, recipient_email):
 
         <!-- CHIUSURA -->
         <div style="border-top: 1px solid #585C66; padding-top: 16px; margin-top: 6px; text-align: center;">
-          <p style="margin: 0; text-align: center; color: #F7F8E2; font-size: 13.5px; font-weight: 600; line-height: 1.45;">
-            Presenta meglio il tuo immobile. Parti dalle immagini.
+          <p style="margin: 0; text-align: center; color: #F7F8E2; font-size: 12.5px; font-weight: 700; line-height: 1.45; text-transform: uppercase; letter-spacing: 0.4px;">
+            LA PRIMA VISITA AL TUO IMMOBILE AVVIENE ATTRAVERSO LE FOTO CHE MOSTRI ONLINE.
           </p>
         </div>
 
