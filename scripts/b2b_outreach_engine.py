@@ -63,7 +63,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     intro_body = "Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
     
     points = [
-        ("FOTOGRAFIA D'INTERNI PER AIRBNB — 80 € / 150 €", "Scatti professionali pensati per presentare al meglio gli ambienti sulle piattaforme di prenotazione."),
+        ("FOTOGRAFIA D'INTERNI PER AIRBNB — 90 € / 150 €", "Scatti professionali pensati per presentare al meglio gli ambienti sulle piattaforme di prenotazione."),
         ("VIRTUAL TOUR 360° MATTERPORT — 290 €", "Un'esperienza immersiva per permettere al potenziale ospite di esplorare gli ambienti prima di prenotare."),
         ("VIDEO REPORTAGE 4K & DRONE", "Walkthrough e riprese aeree per strutture di pregio e contenuti promozionali."),
         ("CONSEGNA RAPIDA IN 72H DAL PAGAMENTO", "File pronti per Airbnb, Booking, Vrbo e per i tuoi canali online.")
