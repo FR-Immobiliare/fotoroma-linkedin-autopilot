@@ -40,20 +40,20 @@ jobs:
 
       - name: 1. Rileva email respinte (Bounces) e pulisci liste
         env:
-          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.gmail.com' }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
-          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: |
           python scripts/bounce_and_mx_validator.py
           python scripts/lead_autoloader_and_cleaner.py
 
       - name: 2. Esegui invio batch sicuro anti-spam (30 email max)
         env:
-          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.gmail.com' }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
-          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: |
           python scripts/b2b_outreach_engine.py
 
@@ -80,10 +80,10 @@ jobs:
 
       - name: Invia Report Giornaliero di Mezzanotte ad Antonio
         env:
-          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.gmail.com' }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
-          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: |
           python scripts/daily_midnight_reporter.py
 
@@ -103,18 +103,18 @@ jobs:
 
       - name: 1. Auto-Harvest nuovi contatti e controllo Bounces
         env:
-          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: |
           python scripts/bounce_and_mx_validator.py
           python scripts/lead_autoloader_and_cleaner.py
 
       - name: 2. Genera e invia Report Settimanale ad Antonio (Mercoledì ore 17:00)
         env:
-          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.gmail.com' }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
-          SMTP_USER: ${{ secrets.SMTP_USER || 'fotoroma18@gmail.com' }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS || 'unsvwxfhkugkklly' }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: |
           python scripts/weekly_analytics_reporter.py
 
