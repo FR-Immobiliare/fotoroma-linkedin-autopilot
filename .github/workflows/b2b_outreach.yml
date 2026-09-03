@@ -2,15 +2,11 @@ name: B2B Outreach & Autonomous Growth Engine
 
 on:
   schedule:
-    # 4 batch/giorno L-V per massimo volume (200 mail/giorno) senza triggerare spam filter Gmail
-    # 1. Mattina — 08:00 IT L-V
-    - cron: '0 6 * * 1-5'
-    # 2. Pre-pranzo — 11:30 IT L-V
-    - cron: '30 9 * * 1-5'
-    # 3. Pomeriggio — 14:30 IT L-V
-    - cron: '30 12 * * 1-5'
-    # 4. Fine giornata — 17:30 IT L-V
-    - cron: '30 15 * * 1-5'
+    # 1 batch/giorno lavorativo (Mar-Ven 09:30 IT, Lun 10:00 IT) — festivi gestiti dallo script
+    # Mar-Ven 09:30 IT = 07:30 UTC
+    - cron: '30 7 * * 2-5'
+    # Lun 10:00 IT = 08:00 UTC
+    - cron: '0 8 * * 1'
     # 3. Report Notturno di Mezzanotte ad Antonio: Ogni sera alle 22:00 UTC (00:00 Italiane)
     - cron: '0 22 * * *'
     # 4. Report Settimanale Omnicanale: Mercoledì alle 15:00 UTC (17:00 Italiane)
@@ -30,7 +26,7 @@ on:
 
 jobs:
   outreach_job:
-    if: github.event.schedule == '0 6 * * 1-5' || github.event.schedule == '30 9 * * 1-5' || github.event.schedule == '30 12 * * 1-5' || github.event.schedule == '30 15 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
+    if: github.event.schedule == '30 7 * * 2-5' || github.event.schedule == '0 8 * * 1' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
     runs-on: ubuntu-latest
     permissions:
       contents: write
