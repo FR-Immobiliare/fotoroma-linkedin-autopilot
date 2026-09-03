@@ -247,7 +247,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
 """
     return subject, html, category_code
 
-def send_outreach_batch(max_emails=35):
+def send_outreach_batch(max_emails=50):
     unsubscribed = load_unsubscribed()
     already_contacted = load_already_contacted()
     
