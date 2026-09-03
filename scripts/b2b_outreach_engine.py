@@ -74,12 +74,22 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     category_code = "AIRBNB_HOST_PM" if is_pm else "AGENZIE_IMMOBILIARI"
     
     hero_img = HERO_URL
-    subject = "IL TUO OSPITE SCEGLIE CON GLI OCCHI"
-    headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
-    subheadline = "La tua prossima prenotazione dipende da come ti presenti online."
-    presentazione = "Sono Antonio, fotografo e titolare di <span style=\"color: #D4D6C8; text-decoration: none !important; border: none !important;\">FotoRomaImmobiliare&#8203;.it</span>.<br>Realizzo fotografie professionali, Virtual Tour e video per strutture ricettive e immobili destinati agli affitti brevi."
-    intro_slogan = "Prima di prenotare, il tuo ospite guarda il tuo annuncio."
-    intro_body = "Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
+    if is_pm:
+        # Copy per host Airbnb, B&B, property manager di affitti brevi
+        subject = "IL TUO OSPITE SCEGLIE CON GLI OCCHI"
+        headline = "FOTO MIGLIORI. PIÙ PRENOTAZIONI."
+        subheadline = "La tua prossima prenotazione dipende da come ti presenti online."
+        presentazione = "Sono Antonio, fotografo e titolare di <span style=\"color: #D4D6C8; text-decoration: none !important; border: none !important;\">FotoRomaImmobiliare&#8203;.it</span>.<br>Realizzo fotografie professionali, Virtual Tour e video per strutture ricettive e immobili destinati agli affitti brevi."
+        intro_slogan = "Prima di prenotare, il tuo ospite guarda il tuo annuncio."
+        intro_body = "Le immagini sono il primo contatto con il tuo immobile: possono determinare se continuerà a guardare, chiederà informazioni oppure passerà alla struttura successiva."
+    else:
+        # Copy per agenzie immobiliari (compravendita/locazione tradizionale)
+        subject = "IL TUO CLIENTE SCEGLIE CON GLI OCCHI"
+        headline = "FOTO MIGLIORI. ANNUNCI CHE CONVERTONO."
+        subheadline = "La velocità di vendita e affitto dipende da come presentate gli immobili online."
+        presentazione = "Sono Antonio, fotografo e titolare di <span style=\"color: #D4D6C8; text-decoration: none !important; border: none !important;\">FotoRomaImmobiliare&#8203;.it</span>.<br>Realizzo servizi fotografici, Virtual Tour e video professionali per agenzie immobiliari, studi di architettura e portafogli di compravendita/locazione."
+        intro_slogan = "Prima di chiamarvi, chi cerca casa guarda il vostro annuncio."
+        intro_body = "Le immagini sono il primo filtro: decidono se il potenziale acquirente o inquilino richiederà informazioni oppure passerà al prossimo annuncio in fila su Immobiliare.it, Idealista o Casa.it."
     
     points = [
         ("FOTOGRAFIA D'INTERNI PER AIRBNB — 90 € / 150 €", "Scatti professionali pensati per presentare al meglio gli ambienti sulle piattaforme di prenotazione."),
