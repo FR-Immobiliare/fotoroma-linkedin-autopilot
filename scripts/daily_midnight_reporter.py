@@ -118,10 +118,10 @@ def generate_html_report(sent_count, sent_items):
     return html
 
 def send_daily_summary():
-    smtp_host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
+    smtp_host = os.environ.get("SMTP_HOST")
     smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    smtp_user = os.environ.get("SMTP_USER", "fotoroma18@gmail.com")
-    smtp_pass = os.environ.get("SMTP_PASS", "unsvwxfhkugkklly")
+    smtp_user = os.environ.get("SMTP_USER")
+    smtp_pass = os.environ.get("SMTP_PASS")
     
     sent_items = get_today_sent_stats()
     sent_count = len(sent_items)
