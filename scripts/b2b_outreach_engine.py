@@ -55,6 +55,30 @@ def _load_image_bytes(filename):
 _LOGO_BYTES = _load_image_bytes("logo_fotoroma_perfect_green.png")
 _HERO_BYTES = _load_image_bytes("hero_email_master.jpg")
 
+# Festivi italiani 2026-2027 (nazionali) — lo script salta l'invio se GITHUB_ACTIONS gira in una di queste date
+IT_HOLIDAYS = {
+    "2026-01-01","2026-01-06","2026-04-05","2026-04-06","2026-04-25",
+    "2026-05-01","2026-06-02","2026-08-15","2026-11-01","2026-12-08",
+    "2026-12-25","2026-12-26",
+    "2027-01-01","2027-01-06","2027-03-28","2027-03-29","2027-04-25",
+    "2027-05-01","2027-06-02","2027-08-15","2027-11-01","2027-12-08",
+    "2027-12-25","2027-12-26",
+}
+
+def is_italian_holiday_today():
+    from datetime import datetime, timezone, timedelta
+    it_now = datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=2)))
+    return it_now.strftime("%Y-%m-%d") in IT_HOLIDAYS
+
+def get_col(row, *names, default=""):
+    """Restituisce il primo valore non vuoto tra le colonne alternative."""
+    for n in names:
+        v = row.get(n)
+        if v and str(v).strip():
+            return str(v).strip()
+    return default
+
+
 def load_unsubscribed():
     if not os.path.exists(UNSUBSCRIBE_FILE):
         return set()
@@ -258,6 +282,9 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     return subject, html, category_code
 
 def send_outreach_batch(max_emails=50):
+    if is_italian_holiday_today():
+        print("🎄 Oggi è festivo italiano — outreach saltato.")
+        return 0
     unsubscribed = load_unsubscribed()
     already_contacted = load_already_contacted()
     
@@ -268,15 +295,23 @@ def send_outreach_batch(max_emails=50):
         with open(csv_file, "r", encoding="utf-8", errors="ignore") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                email = (row.get("email") or row.get("Email") or "").strip().lower()
+                email = get_col(row, "email", "Email", "EMAIL", "Email Contatto", "e-mail", "E-mail", "email_contatto").lower()
                 if not email or "@" not in email:
                     continue
                 if email in unsubscribed or email in already_contacted:
                     continue
-                name = row.get("nome") or row.get("Nome") or row.get("name") or "Gentile Host / Agenzia"
-                zone = row.get("zona") or row.get("Zona") or row.get("zone") or ""
-                city = row.get("citta") or row.get("Citta") or row.get("city") or "Roma"
-                target_type = row.get("categoria") or row.get("Categoria") or row.get("type") or "AIRBNB"
+                name = get_col(row, "nome", "Nome", "name",
+                               "Nome Struttura / Host", "Nome Struttura / Agenzia",
+                               "Nome Società Property Manager", "Nome Società",
+                               default="Gentile Host / Agenzia")
+                zone = get_col(row, "zona", "Zona", "zone",
+                               "Quartiere / Zona", "Quartiere / Micro-Zona")
+                city = get_col(row, "citta", "Citta", "Città", "city",
+                               "Città Operativa", "Città / Area", "Città / Comune",
+                               default="Roma")
+                target_type = get_col(row, "categoria", "Categoria", "type",
+                                      "Tipologia", "Tipologia Gestione",
+                                      default="AIRBNB")
                 
                 # ESCLUSIONE RESTRITTIVA NAPOLI SU RICHIESTA UTENTE
                 full_info = f"{city} {zone} {name} {target_type} {email}".lower()
