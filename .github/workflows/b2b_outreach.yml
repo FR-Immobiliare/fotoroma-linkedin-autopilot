@@ -2,11 +2,11 @@ name: B2B Outreach & Autonomous Growth Engine
 
 on:
   schedule:
-    # 1 batch/giorno lavorativo (Mar-Ven 09:30 IT, Lun 10:00 IT) — festivi gestiti dallo script
-    # Mar-Ven 09:30 IT = 07:30 UTC
+    # ROMA (default): Mar-Ven 09:30 IT + Lun 10:00 IT — festivi gestiti dallo script
     - cron: '30 7 * * 2-5'
-    # Lun 10:00 IT = 08:00 UTC
     - cron: '0 8 * * 1'
+    # NAPOLI AmericasCup 2027: Mar-Ven 14:30 IT
+    - cron: '30 12 * * 1-5'
     # 3. Report Notturno di Mezzanotte ad Antonio: Ogni sera alle 22:00 UTC (00:00 Italiane)
     - cron: '0 22 * * *'
     # 4. Report Settimanale Omnicanale: Mercoledì alle 15:00 UTC (17:00 Italiane)
@@ -26,7 +26,7 @@ on:
 
 jobs:
   outreach_job:
-    if: github.event.schedule == '30 7 * * 2-5' || github.event.schedule == '0 8 * * 1' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
+    if: github.event.schedule == '30 7 * * 2-5' || github.event.schedule == '0 8 * * 1' || github.event.schedule == '30 12 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -49,13 +49,15 @@ jobs:
           python scripts/bounce_and_mx_validator.py
           python scripts/lead_autoloader_and_cleaner.py
 
-      - name: 2. Esegui invio batch sicuro anti-spam (30 email max)
+      - name: 2. Esegui invio batch (mode roma o napoli in base al cron)
         env:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          OUTREACH_MODE: ${{ github.event.schedule == '30 12 * * 1-5' && 'napoli' || 'roma' }}
         run: |
+          echo "🎯 Mode outreach: $OUTREACH_MODE"
           python scripts/b2b_outreach_engine.py
 
       - name: 3. Salva e sincronizza log e blacklist
