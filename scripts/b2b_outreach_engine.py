@@ -16,11 +16,12 @@ import urllib.parse
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
 
-SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
+SMTP_HOST = os.getenv("SMTP_HOST")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER = os.getenv("SMTP_USER", "fotoroma18@gmail.com")
-SMTP_PASS = os.getenv("SMTP_PASS", "unsvwxfhkugkklly")
+SMTP_USER = os.getenv("SMTP_USER")
+SMTP_PASS = os.getenv("SMTP_PASS")
 SENDER_DISPLAY = "FotoRomaImmobiliare"
 SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 
@@ -28,13 +29,31 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 CONTACTS_FILES = [
     os.path.join(DATA_DIR, "airbnb_hosts_massive_3500.csv"),
     os.path.join(DATA_DIR, "prospects_southern_lazio.csv"),
-    os.path.join(DATA_DIR, "enriched_contacts.csv")
+    os.path.join(DATA_DIR, "enriched_contacts.csv"),
+    os.path.join(DATA_DIR, "airbnb_hosts_massive.csv"),
+    os.path.join(DATA_DIR, "property_managers.csv"),
+    os.path.join(DATA_DIR, "airbnb_hosts_leads.csv"),
+    os.path.join(DATA_DIR, "airbnb_territory_leads_complete.csv"),
+    os.path.join(DATA_DIR, "esperia_radius_45km_leads.csv"),
+    os.path.join(DATA_DIR, "prospects_raw.csv"),
 ]
 LOG_FILE = os.path.join(DATA_DIR, "contacted_log.csv")
 UNSUBSCRIBE_FILE = os.path.join(DATA_DIR, "unsubscribed.csv")
 
 LOGO_URL = "https://raw.githubusercontent.com/FR-Immobiliare/fotoroma-linkedin-autopilot/main/data/logo_fotoroma_perfect_green.png"
 HERO_URL = "https://raw.githubusercontent.com/FR-Immobiliare/fotoroma-linkedin-autopilot/main/data/hero_email_master.jpg"
+
+def _load_image_bytes(filename):
+    p = os.path.join(DATA_DIR, filename)
+    try:
+        with open(p, "rb") as _fh:
+            return _fh.read()
+    except Exception as _e:
+        print(f"⚠️ Impossibile caricare {filename}: {_e}")
+        return None
+
+_LOGO_BYTES = _load_image_bytes("logo_fotoroma_perfect_green.png")
+_HERO_BYTES = _load_image_bytes("hero_email_master.jpg")
 
 def load_unsubscribed():
     if not os.path.exists(UNSUBSCRIBE_FILE):
@@ -123,7 +142,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     <!-- HEADER BRAND -->
     <tr>
       <td align="center" bgcolor="#2F3136" style="padding: 20px 18px 15px 18px; background-color: #2F3136 !important; border-bottom: 1px solid #4D5059; text-align: center;">
-        <img src="{LOGO_URL}" alt="FotoRomaImmobiliare" style="height: 76px; max-height: 76px; width: auto; display: block; margin: 0 auto 5px auto;" />
+        <img src="cid:logo@fotoroma" alt="FotoRomaImmobiliare" style="height: 76px; max-height: 76px; width: auto; display: block; margin: 0 auto 5px auto;" />
         <p style="margin: 0; color: #F7F8E2 !important; font-size: 10.5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; text-align: center;">FOTO • VIDEO • VIRTUAL TOUR PER IMMOBILI</p>
       </td>
     </tr>
@@ -131,7 +150,7 @@ def build_html_template(target_type, name, zone, city, recipient_email):
     <!-- HERO IMAGE -->
     <tr>
       <td bgcolor="#43464D" style="padding: 0; background-color: #43464D !important;">
-        <img src="{hero_img}" alt="FotoRomaImmobiliare" style="width: 100%; max-height: 235px; object-fit: cover; display: block;" />
+        <img src="cid:hero@fotoroma" alt="FotoRomaImmobiliare" style="width: 100%; max-height: 235px; object-fit: cover; display: block;" />
       </td>
     </tr>
 
@@ -292,12 +311,27 @@ def send_outreach_batch(max_emails=35):
             
             subject, html_content, category_code = build_html_template(target_type, name, zone, city, email)
             
-            msg = MIMEMultipart("alternative")
+            msg = MIMEMultipart("related")
             msg["Subject"] = subject
             msg["From"] = f"{SENDER_DISPLAY} <{SMTP_USER}>"
             msg["To"] = email
             msg["Reply-To"] = SENDER_EMAIL
-            msg.attach(MIMEText(html_content, "html", "utf-8"))
+
+            alt = MIMEMultipart("alternative")
+            alt.attach(MIMEText(html_content, "html", "utf-8"))
+            msg.attach(alt)
+
+            if _LOGO_BYTES:
+                logo_att = MIMEImage(_LOGO_BYTES, _subtype="png")
+                logo_att.add_header("Content-ID", "<logo@fotoroma>")
+                logo_att.add_header("Content-Disposition", "inline", filename="logo.png")
+                msg.attach(logo_att)
+
+            if _HERO_BYTES:
+                hero_att = MIMEImage(_HERO_BYTES, _subtype="jpeg")
+                hero_att.add_header("Content-ID", "<hero@fotoroma>")
+                hero_att.add_header("Content-Disposition", "inline", filename="hero.jpg")
+                msg.attach(hero_att)
             
             try:
                 server.sendmail(SMTP_USER, [email], msg.as_string())
