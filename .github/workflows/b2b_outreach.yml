@@ -2,10 +2,15 @@ name: B2B Outreach & Autonomous Growth Engine
 
 on:
   schedule:
-    # 1. Outreach del Mattino: Tutti i feriali (Lunedì - Venerdì) alle 07:30 UTC (09:30 Italiane)
-    - cron: '30 7 * * 1-5'
-    # 2. Outreach della Sera: Tutti i giorni alle 16:00 UTC (18:00 Italiane)
-    - cron: '0 16 * * *'
+    # 4 batch/giorno L-V per massimo volume (200 mail/giorno) senza triggerare spam filter Gmail
+    # 1. Mattina — 08:00 IT L-V
+    - cron: '0 6 * * 1-5'
+    # 2. Pre-pranzo — 11:30 IT L-V
+    - cron: '30 9 * * 1-5'
+    # 3. Pomeriggio — 14:30 IT L-V
+    - cron: '30 12 * * 1-5'
+    # 4. Fine giornata — 17:30 IT L-V
+    - cron: '30 15 * * 1-5'
     # 3. Report Notturno di Mezzanotte ad Antonio: Ogni sera alle 22:00 UTC (00:00 Italiane)
     - cron: '0 22 * * *'
     # 4. Report Settimanale Omnicanale: Mercoledì alle 15:00 UTC (17:00 Italiane)
@@ -25,7 +30,7 @@ on:
 
 jobs:
   outreach_job:
-    if: github.event.schedule == '30 7 * * 1-5' || github.event.schedule == '0 16 * * *' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
+    if: github.event.schedule == '0 6 * * 1-5' || github.event.schedule == '30 9 * * 1-5' || github.event.schedule == '30 12 * * 1-5' || github.event.schedule == '30 15 * * 1-5' || (github.event_name == 'workflow_dispatch' && inputs.action_type == 'outreach')
     runs-on: ubuntu-latest
     permissions:
       contents: write
