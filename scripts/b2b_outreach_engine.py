@@ -25,6 +25,9 @@ SMTP_PASS = os.getenv("SMTP_PASS")
 SENDER_DISPLAY = "FotoRomaImmobiliare"
 SENDER_EMAIL = "info@fotoromaimmobiliare.it"
 
+OUTREACH_MODE = os.getenv("OUTREACH_MODE", "roma").strip().lower()
+IS_AMERICASCUP = (OUTREACH_MODE == "napoli")
+
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 CONTACTS_FILES = [
     os.path.join(DATA_DIR, "airbnb_hosts_massive_3500.csv"),
@@ -95,10 +98,17 @@ def load_already_contacted():
 
 def build_html_template(target_type, name, zone, city, recipient_email):
     is_pm = "AIRBNB" in target_type.upper() or "HOST" in target_type.upper() or "PROPERTY" in target_type.upper()
-    category_code = "AIRBNB_HOST_PM" if is_pm else "AGENZIE_IMMOBILIARI"
+    category_code = ("NAPOLI_AMERICASCUP" if IS_AMERICASCUP else ("AIRBNB_HOST_PM" if is_pm else "AGENZIE_IMMOBILIARI"))
     
     hero_img = HERO_URL
-    if is_pm:
+    if IS_AMERICASCUP:
+        subject = "Foto migliori, clienti migliori — prima dell'America's Cup 2027"
+        headline = "FOTO MIGLIORI. CLIENTI MIGLIORI."
+        subheadline = "La tua prossima prenotazione dipende da come ti presenti online."
+        presentazione = "Sono Antonio, fotografo e titolare di FotoRomaImmobiliare.it.<br>Realizzo servizi fotografici professionali per strutture ricettive come la vostra a Napoli."
+        intro_slogan = "Con l'America's Cup 2027 gli occhi del mondo si spostano su Napoli."
+        intro_body = "Più domanda, ma anche più concorrenza. Chi prenota confronta gli annunci e sceglie con gli occhi — le fotografie fanno la differenza tra chi riceve la richiesta e chi viene saltato."
+    elif is_pm:
         # Copy per host Airbnb, B&B, property manager di affitti brevi
         subject = "IL TUO OSPITE SCEGLIE CON GLI OCCHI"
         headline = "FOTO MIGLIORI. PIÙ PRENOTAZIONI."
@@ -313,9 +323,11 @@ def send_outreach_batch(max_emails=50):
                                       "Tipologia", "Tipologia Gestione",
                                       default="AIRBNB")
                 
-                # ESCLUSIONE RESTRITTIVA NAPOLI SU RICHIESTA UTENTE
                 full_info = f"{city} {zone} {name} {target_type} {email}".lower()
-                if "napoli" in full_info:
+                _south = any(k in full_info for k in ("napoli","campania","ischia","capri","sorrento","amalfi","salerno"))
+                if IS_AMERICASCUP and not _south:
+                    continue
+                if (not IS_AMERICASCUP) and _south:
                     continue
 
                 candidates.append({
