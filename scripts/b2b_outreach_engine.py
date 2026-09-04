@@ -29,16 +29,14 @@ OUTREACH_MODE = os.getenv("OUTREACH_MODE", "roma").strip().lower()
 IS_AMERICASCUP = (OUTREACH_MODE == "napoli")
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+# Sorgenti contatti REALI e curate (post-cleanup fake generator del 2026-09-04)
+# airbnb_hosts_massive_3500.csv → lead singoli aggiunti manualmente (contiene velvetkeys)
+# enriched_contacts.csv         → 14 agenzie centro storico Roma (verificate)
+# property_managers.csv          → property manager con Email Contatto verificata via scraping
 CONTACTS_FILES = [
     os.path.join(DATA_DIR, "airbnb_hosts_massive_3500.csv"),
-    os.path.join(DATA_DIR, "prospects_southern_lazio.csv"),
     os.path.join(DATA_DIR, "enriched_contacts.csv"),
-    os.path.join(DATA_DIR, "airbnb_hosts_massive.csv"),
     os.path.join(DATA_DIR, "property_managers.csv"),
-    os.path.join(DATA_DIR, "airbnb_hosts_leads.csv"),
-    os.path.join(DATA_DIR, "airbnb_territory_leads_complete.csv"),
-    os.path.join(DATA_DIR, "esperia_radius_45km_leads.csv"),
-    os.path.join(DATA_DIR, "prospects_raw.csv"),
 ]
 LOG_FILE = os.path.join(DATA_DIR, "contacted_log.csv")
 UNSUBSCRIBE_FILE = os.path.join(DATA_DIR, "unsubscribed.csv")
