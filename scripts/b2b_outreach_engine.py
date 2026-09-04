@@ -82,6 +82,23 @@ def get_col(row, *names, default=""):
     return default
 
 
+
+
+# Cache MX lookup — rifiuta email con dominio senza MX record (protezione anti-bounce)
+_mx_cache = {}
+def has_mx_record(domain):
+    if domain in _mx_cache:
+        return _mx_cache[domain]
+    try:
+        import subprocess as _sp
+        r = _sp.run(["dig","+short","+time=3","+tries=1","MX",domain], capture_output=True, text=True, timeout=5)
+        valid = bool(r.stdout.strip())
+    except Exception:
+        # In caso di errore di dig, non bloccare (fail-open)
+        valid = True
+    _mx_cache[domain] = valid
+    return valid
+
 def load_unsubscribed():
     if not os.path.exists(UNSUBSCRIBE_FILE):
         return set()
@@ -329,6 +346,12 @@ def send_outreach_batch(max_emails=50):
                     continue
                 if (not IS_AMERICASCUP) and _south:
                     continue
+                
+                # Protezione anti-bounce: rifiuta email con dominio senza record MX
+                _dom = email.split("@")[-1]
+                if not has_mx_record(_dom):
+                    print(f"  ⛔ Skip (dominio senza MX): {email}")
+                    continue
 
                 candidates.append({
                     "email": email,
@@ -420,4 +443,3 @@ if __name__ == "__main__":
         except ValueError:
             pass
     send_outreach_batch(max_emails=limit)
-
